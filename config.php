@@ -21,7 +21,7 @@
             // Set bootstrap_styles to false for reportico classic styles, or "3" for bootstrap 3 look and feel and 2 for bootstrap 2
             // If you are embedding reportico and you have already loaded bootstrap then set bootstrap_preloaded equals true so reportico
             // doestnt load it again.
-            'bootstrap_styles' => "3",
+            'bootstrap_styles' => "2",
             'bootstrap_preloaded' => true,
 
             // In bootstrap enable pages, the bootstrap modal is by default used for the quick edit buttons

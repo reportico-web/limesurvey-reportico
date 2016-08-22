@@ -1,5 +1,5 @@
 <?php 
-class Reportico extends \ls\pluginmanager\PluginBase {
+class Reportico extends PluginBase {
 
 
     protected $storage = 'DbStorage';    
@@ -16,8 +16,23 @@ class Reportico extends \ls\pluginmanager\PluginBase {
          */
         //$this->subscribe('afterPluginLoad', 'adminPage');
         //$this->subscribe('afterPluginLoad', 'ajax');
-        $this->subscribe('beforeAdminMenuRender');
+        $this->subscribe('afterAdminMenuLoad');
+        //$this->subscribe('beforeAdminMenuRender');
         $this->subscribe('newDirectRequest');
+    }
+
+    public function afterAdminMenuLoad()
+    {
+        $event = $this->event;
+        $menu = $event->get('menu', array());
+        $menu['items']['left'][]=array(
+                'href' => "plugins/direct/reportico?function=adminPage&plugin=Reportico",
+                'alt' => gT('Reportico'),
+                'image' => 'bounce.png'
+            );
+
+        $event->set('menu', $menu);
+
     }
     
     
@@ -40,6 +55,7 @@ class Reportico extends \ls\pluginmanager\PluginBase {
 
     public function adminPage() 
     {
+
         //return "HelloWorld";
         $this->engine = $this->getReporticoEngine();
         $this->partialRender = Yii::app()->request->getQuery("partialReportico", false);
@@ -467,7 +483,7 @@ class Reportico extends \ls\pluginmanager\PluginBase {
 
     public function newDirectRequest(){
        $event = $this->event;
-       
+
        // you can get other params from the request object
        $request = $event->get('request');
        
