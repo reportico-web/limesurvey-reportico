@@ -2,7 +2,8 @@
 class Reportico extends \ls\pluginmanager\PluginBase {
 
 
-    protected $storage = 'DbStorage';    
+    protected $storage = 'DbStorage';
+    static protected $name = 'Reportico';
     static protected $description = 'Reportico plugin';
 
     public $engine;
