@@ -88,7 +88,7 @@ class ADODB_pdo extends ADOConnection {
 	public $dsnType = '';
 	public $stmt = false;
 	
-	function ADODB_pdo()
+	function __construct()
 	{
 	}
 	
@@ -467,7 +467,7 @@ class ADOPDOStatement {
 	public $_stmt;
 	public $_connectionID;
 	
-	function ADOPDOStatement($stmt,$connection)
+	function __construct($stmt,$connection)
 	{
 		$this->_stmt = $stmt;
 		$this->_connectionID = $connection;
@@ -543,7 +543,7 @@ class ADORecordSet_pdo extends ADORecordSet {
 		$this->fetchMode = $mode;
 		
 		$this->_queryID = $id;
-		parent::__construct($id);
+        parent::__construct($id) ;
 	}
 
 	

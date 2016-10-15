@@ -267,7 +267,7 @@ class reportico extends reportico_object
 	var $delete_project_url;
 	var $create_report_url;
 
-	var $version = "4.3";
+	var $version = "4.4";
 
 	var $name;
 	var $rowselection="all";
@@ -347,6 +347,7 @@ class reportico extends reportico_object
 
 	var $framework_parent = false;
 	var $framework_type = false;
+    var $return_output_to_caller = false;
 
 	var $charting_engine = "PCHART";
 	var $charting_engine_html = "NVD3";
@@ -835,6 +836,20 @@ class reportico extends reportico_object
 			handle_error("$in_scope: Column $in_column_name unknown");
 		}
 	}
+
+	// -----------------------------------------------------------------------------
+	// Function : get_criteria_by_name
+	// -----------------------------------------------------------------------------
+	function get_criteria_by_name($in_criteria_name)
+	{
+		if ( !array_key_exists($in_criteria_name, $this->lookup_queries) )
+		{
+			return false;
+		}
+        else
+            return $this->lookup_queries[$in_criteria_name];
+	}
+
 	// -----------------------------------------------------------------------------
 	// Function : check_criteria_name
 	// -----------------------------------------------------------------------------
@@ -845,6 +860,7 @@ class reportico extends reportico_object
 			handle_error("$in_scope: Column $in_column_name unknown");
 		}
 	}
+
 	// -----------------------------------------------------------------------------
 	// Function : check_criteria_name_r
 	// -----------------------------------------------------------------------------
@@ -956,7 +972,7 @@ class reportico extends reportico_object
 	// -----------------------------------------------------------------------------
 	function set_criteria_help($query_name, $criteria_help)
 	{
-		$this->check_criteria_name("set_criteria_defaults", $query_name);
+		$this->check_criteria_name("set_criteria_help", $query_name);
 		if ( array_key_exists($query_name, $this->lookup_queries) )
 		{
 			$col =& $this->lookup_queries[$query_name] ;
@@ -1230,6 +1246,12 @@ class reportico extends reportico_object
 			$this->execute_mode = "PREPARE";
 		}
 
+		// User clicked Design Mode Button
+		if ( array_key_exists('submit_criteria_mode', $_REQUEST) )
+		{
+			$this->execute_mode = "CRITERIA";
+		}
+
 		if ( array_key_exists('execute_mode', $_REQUEST) )
 		{
 			if ( $_REQUEST["execute_mode"] == "MAINTAIN" && $this->allow_maintain != "SAFE" 
@@ -1318,7 +1340,9 @@ class reportico extends reportico_object
         if ( $this->initial_execute_mode && get_reportico_session_param("awaiting_initial_defaults") )
             $this->execute_mode = $this->initial_execute_mode;
 
-		set_reportico_session_param("execute_mode",$this->execute_mode);
+        // Maintain execute mode through except for CRITERIA
+        if ( $this->execute_mode != "CRITERIA" )
+		    set_reportico_session_param("execute_mode",$this->execute_mode);
 		return($this->execute_mode);
 	}
 	
@@ -1456,18 +1480,18 @@ class reportico extends reportico_object
             }
             else
             {
-                    $this->target_show_detail = true;
-                    $this->target_show_graph = true;
-                    $this->target_show_group_headers = true;
-                    $this->target_show_group_trailers = true;
-                    $this->target_show_column_headers = true;
-                    $this->target_show_criteria = true;
-                    set_reportico_session_param("target_show_detail",true);
-                    set_reportico_session_param("target_show_graph",true);
-                    set_reportico_session_param("target_show_group_headers",true);
-                    set_reportico_session_param("target_show_group_trailers",true);
-                    set_reportico_session_param("target_show_column_headers",true);
-                    set_reportico_session_param("target_show_criteria",true);
+                    //$this->target_show_detail = true;
+                    //$this->target_show_graph = true;
+                    //$this->target_show_group_headers = true;
+                    //$this->target_show_group_trailers = true;
+                    //$this->target_show_column_headers = true;
+                    //$this->target_show_criteria = true;
+                    //set_reportico_session_param("target_show_detail",true);
+                    //set_reportico_session_param("target_show_graph",true);
+                    //set_reportico_session_param("target_show_group_headers",true);
+                    //set_reportico_session_param("target_show_group_trailers",true);
+                    //set_reportico_session_param("target_show_column_headers",true);
+                    //set_reportico_session_param("target_show_criteria",true);
             }
         }
         else
@@ -1526,7 +1550,10 @@ class reportico extends reportico_object
 
 			if ( array_key_exists($crit_name, $_REQUEST) )
 			{
-				$crit_value = $_REQUEST[$crit_name];
+                // Since using Select2, we find unselected list boxes still send an empty array with a single character which we dont want to include
+                // as a criteria selection
+                if ( !(is_array($_REQUEST[$col->query_name]) && count($col->query_name) == 1 && $_REQUEST[$col->query_name][0] == "" ))
+				    $crit_value = $_REQUEST[$crit_name];
 			}
 
 			if ( array_key_exists("HIDDEN_" . $crit_name, $_REQUEST) )
@@ -1648,11 +1675,12 @@ class reportico extends reportico_object
             // Fetch the criteria value summary if required for displaying
             // the criteria entry summary at top of report
 			if ( $execute_mode && $this->target_show_criteria &&
-                    ( array_key_exists($col->query_name, $_REQUEST) 
+                    ( ( array_key_exists($col->query_name, $_REQUEST) && !(is_array($_REQUEST[$col->query_name]) && count($col->query_name) == 1 && $_REQUEST[$col->query_name][0] == "" ))
 			        || array_key_exists("MANUAL_".$col->query_name, $_REQUEST) 
 			        || array_key_exists("HIDDEN_".$col->query_name, $_REQUEST) 
                     ) )
 			{
+
 				$lq =&	$this->lookup_queries[$col->query_name] ;
                 if ( $lq->criteria_type == "LOOKUP" )
 				    $lq->execute_criteria_lookup();
@@ -1662,8 +1690,11 @@ class reportico extends reportico_object
 
 			if ( array_key_exists($col->query_name, $_REQUEST) )
 			{
-				$this->lookup_queries[$col->query_name]->column_value =
-					$_REQUEST[$col->query_name];
+                // Since using Select2, we find unselected list boxes still send an empty array with a single character which we dont want to include
+                // as a criteria selection
+                if ( !(is_array($_REQUEST[$col->query_name]) && count($col->query_name) == 1 && $_REQUEST[$col->query_name][0] == "") )
+				    $this->lookup_queries[$col->query_name]->column_value =
+					    $_REQUEST[$col->query_name];
 			}
 
 			if ( array_key_exists("MANUAL_".$col->query_name, $_REQUEST) )
@@ -1674,6 +1705,7 @@ class reportico extends reportico_object
 				$lq =&	$this->lookup_queries[$col->query_name] ;
 				if ( $lq->criteria_type == "LOOKUP" && $_REQUEST["MANUAL_".$col->query_name])
 				{
+                    if ( array_key_exists("MANUAL_".$col->query_name, $_REQUEST) )
 					foreach ( $lq->lookup_query->columns as $k => $col1 )
 					{
 						if ( $col1->lookup_display_flag )
@@ -2220,6 +2252,10 @@ class reportico extends reportico_object
 				$str = ' AND '.$this->match_column.' LIKE "%'.$expval.'%"';
 			}
 		}
+        else if ( $expval = get_request_item("reportico_criteria_match", false) )
+        {
+            $str = ' AND '.$this->match_column.' LIKE "%'.$expval.'%"';
+        }
 
 		return $str;
 	}
@@ -2440,7 +2476,7 @@ class reportico extends reportico_object
 	    {
 		    $this->query_statement = reportico_assignment::reportico_meta_sql_criteria($this->parent_query, $this->query_statement);
 	    }
-			
+
 	}			
 
 	// -----------------------------------------------------------------------------
@@ -3491,6 +3527,36 @@ class reportico extends reportico_object
 	}
 
 	// -----------------------------------------------------------------------------
+	// Function : check_criteria_validity
+    // Ensures that Mandatory criteria is met
+	// -----------------------------------------------------------------------------
+	function check_criteria_validity()
+    {
+		foreach ( $this->lookup_queries as $col )
+		{
+            if ( $col->required == "yes" )
+            {
+				//handle_error( "Mandatory" );
+				if ( !$this->lookup_queries[$col->query_name]->column_value )
+                {
+                    if ( get_request_item("new_reportico_window",  false ) )
+                    {
+                        header("HTTP/1.0 404 Not Found", true);
+                        $response_array = array();
+                        $response_array["errno"] = 100;
+                        $response_array["errmsg"] = template_xlate("REQUIRED_CRITERIA")." - ".sw_translate($this->lookup_queries[$col->query_name]->derive_attribute("column_title", ""));
+                        echo json_encode($response_array);
+                        die;
+                    }
+                    else
+			            handle_error(template_xlate("REQUIRED_CRITERIA")." - ".sw_translate($this->lookup_queries[$col->query_name]->derive_attribute("column_title", ""))
+                        , E_USER_NOTICE);
+                }
+            }
+        }
+    }
+
+	// -----------------------------------------------------------------------------
 	// Function : handle_xml_input
 	// -----------------------------------------------------------------------------
 	function handle_xml_query_input($mode=false)
@@ -3906,7 +3972,7 @@ class reportico extends reportico_object
 					break;
 		}
 
-		// If xml file is used to genearate the reportico_query, either by the xmlin session variable
+		// If xml file is used to generate the reportico_query, either by the xmlin session variable
 		// or the xmlin request variable then process this before executing
 		if ( $mode == "EXECUTE" )
 		{
@@ -3952,17 +4018,32 @@ class reportico extends reportico_object
 			}
 			set_reportico_session_param('latestRequest',"");
 		}
+
         // Derive URL call of the calling script so it can be recalled in form actions when not running in AJAX mode
         if ( !$this->url_path_to_calling_script )
             $this->url_path_to_calling_script = $_SERVER["SCRIPT_NAME"];
-
 
         // Work out we are in AJAX mode
         $this->derive_ajax_operation();
 
 		switch ($mode) 
 		{
-
+            case "CRITERIA":
+				load_mode_language_pack("languages", $this->output_charset);
+				$this->initialize_panels($mode);
+				$this->handle_xml_query_input($mode);
+				$this->set_request_columns();
+                if ( !isset($_REQUEST['reportico_criteria'] ))
+                    echo "{ Success: false, Message: \"You must specify a criteria\" }";
+                else if ( !$criteria = $this->get_criteria_by_name($_REQUEST['reportico_criteria']) )
+                    echo "{ Success: false, Message: \"Criteria {$_REQUEST['reportico_criteria']} unknown in this report\" }";
+                else
+                {
+                    echo $criteria->execute_criteria_lookup();
+                    echo $criteria->lookup_ajax();
+                }
+                die;
+                
 			case "MODIFY":
                 require_once("swmodify.php");
 				$this->initialize_panels($mode);
@@ -3991,18 +4072,29 @@ class reportico extends reportico_object
 
                 restore_error_handler();
 
+                // Some calling frameworks require output to be returned
+                // for rendering inside web pages .. in this case
+                // return_output_to_caller will be set to true
 				if ( $this->user_template )
-				    $txt = $this->panels["MAIN"]->smarty->fetch($this->user_template.'_admin.tpl');
-				else
+                    $template = $this->user_template."_admin.tpl";
+                else
+                    $template = "admin.tpl";
+                if ( $this->return_output_to_caller )
                 {
-				    $txt = $this->panels["MAIN"]->smarty->fetch('admin.tpl');
+				    $txt = $this->panels["MAIN"]->smarty->fetch($template);
+		            $old_error_handler = set_error_handler("\\reportico\\reportico\\components\\ErrorHandler");
+                    return $txt;
                 }
-		        $old_error_handler = set_error_handler("\\reportico\\reportico\\components\\ErrorHandler");
-                return $txt;
+                else
+                {
+				    $this->panels["MAIN"]->smarty->display($template);
+		            $old_error_handler = set_error_handler("\\reportico\\reportico\\components\\ErrorHandler");
+                }
 				break;
 
 			case "MENU":
 				$this->handle_xml_query_input($mode);
+				$this->set_request_columns();
 				$this->build_menu();
 	            load_mode_language_pack("languages", $this->output_charset);
 				load_mode_language_pack("menu", $this->output_charset);
@@ -4019,11 +4111,24 @@ class reportico extends reportico_object
                 $this->panels["MAIN"]->smarty->assign('REPORTICO_DYNAMIC_GRIDS_PAGE_SIZE', $this->dynamic_grids_page_size);
 
                 restore_error_handler();
+                // Some calling frameworks require output to be returned
+                // for rendering inside web pages .. in this case
+                // return_output_to_caller will be set to true
 				if ( $this->user_template )
-				    $this->panels["MAIN"]->smarty->display($this->user_template.'_menu.tpl');
-				else
-				    $this->panels["MAIN"]->smarty->display('menu.tpl');
-		        $old_error_handler = set_error_handler("\\reportico\\reportico\\components\\ErrorHandler");
+                    $template = $this->user_template."_menu.tpl";
+                else
+                    $template = "menu.tpl";
+                if ( $this->return_output_to_caller )
+                {
+				    $txt = $this->panels["MAIN"]->smarty->fetch($template);
+		            $old_error_handler = set_error_handler("\\reportico\\reportico\\components\\ErrorHandler");
+                    return $txt;
+                }
+                else
+                {
+				    $this->panels["MAIN"]->smarty->display($template);
+		            $old_error_handler = set_error_handler("\\reportico\\reportico\\components\\ErrorHandler");
+                }
 				break;
 
 			case "PREPARE":
@@ -4057,16 +4162,27 @@ class reportico extends reportico_object
 
 				$reportname = preg_replace("/.xml/", "", $this->xmloutfile.'_prepare.tpl');
                 restore_error_handler();
+
+                // Some calling frameworks require output to be returned
+                // for rendering inside web pages .. in this case
+                // return_output_to_caller will be set to true
 				if (preg_match("/$reportname/", find_best_location_in_include_path( "templates/". $reportname )))
-				{
-					$this->panels["MAIN"]->smarty->display($reportname);
-				}
-				else
-				if ( $this->user_template )
-				        $this->panels["MAIN"]->smarty->display($this->user_template.'_prepare.tpl');
-				else
-				        $this->panels["MAIN"]->smarty->display('prepare.tpl');
-		        $old_error_handler = set_error_handler("\\reportico\\reportico\\components\\ErrorHandler");
+                    $template = $reportname;
+				else if ( $this->user_template )
+                    $template = $this->user_template."_prepare.tpl";
+                else
+                    $template = "prepare.tpl";
+                if ( $this->return_output_to_caller )
+                {
+				    $txt = $this->panels["MAIN"]->smarty->fetch($template);
+		            $old_error_handler = set_error_handler("\\reportico\\reportico\\components\\ErrorHandler");
+                    return $txt;
+                }
+                else
+                {
+				    $this->panels["MAIN"]->smarty->display($template);
+		            $old_error_handler = set_error_handler("\\reportico\\reportico\\components\\ErrorHandler");
+                }
 				break;
 				 
 			
@@ -4082,6 +4198,7 @@ class reportico extends reportico_object
 		        if ( $this->attributes["gridPageable"] != ".DEFAULT" ) $this->dynamic_grids_paging =  ( $this->attributes["gridPageable"] == "yes" ) ;
 		        if ( $this->attributes["gridPageSize"] != ".DEFAULT" && $this->attributes["gridPageSize"] ) $this->dynamic_grids_page_size =  $this->attributes["gridPageSize"];
 
+
                 $this->panels["MAIN"]->smarty->assign('REPORTICO_DYNAMIC_GRIDS', $this->dynamic_grids);
                 $this->panels["MAIN"]->smarty->assign('REPORTICO_DYNAMIC_GRIDS_SORTABLE', $this->dynamic_grids_sortable);
                 $this->panels["MAIN"]->smarty->assign('REPORTICO_DYNAMIC_GRIDS_SEARCHABLE', $this->dynamic_grids_searchable);
@@ -4093,6 +4210,7 @@ class reportico extends reportico_object
 				$g_code_area = false;
 				load_mode_language_pack("execute", $this->output_charset);
                 localise_template_strings($this->panels["MAIN"]->smarty);
+	            $this->check_criteria_validity();
 
                 if ( $this->xmlinput == "deleteproject.xml" || $this->xmlinput == "configureproject.xml" || $this->xmlinput == "createtutorials.xml" || $this->xmlinput == "createproject.xml" )
                 {
@@ -4112,7 +4230,7 @@ class reportico extends reportico_object
 					return;
 				}
 
-                // Situtations where we dont want to swithc results page - no data found, debug mode, not logged in
+                // Situtations where we dont want to switch results page - no data found, debug mode, not logged in
 				if ( ( count($g_system_errors) > 0 || $g_debug_mode || count($g_system_debug) > 0 || !get_reportico_session_param("loggedin") ) )
 				{
                     // If errors and this is an ajax request return json ajax response for first message
@@ -4147,16 +4265,27 @@ class reportico extends reportico_object
                     localise_template_strings($this->panels["MAIN"]->smarty);
 					$reportname = preg_replace("/.xml/", "", $this->xmloutfile.'_prepare.tpl');
                     restore_error_handler();
-					if (preg_match("/$reportname/", find_best_location_in_include_path( "templates/". $reportname )))
-					{
-						$this->panels["MAIN"]->smarty->display($reportname);
-					}
-					else
-						if ( $this->user_template )
-							$this->panels["MAIN"]->smarty->display($this->user_template.'_prepare.tpl');
-						else
-							$this->panels["MAIN"]->smarty->display('prepare.tpl');
-	                $old_error_handler = set_error_handler("\\reportico\\reportico\\components\\ErrorHandler");
+
+                    // Some calling frameworks require output to be returned
+                    // for rendering inside web pages .. in this case
+                    // return_output_to_caller will be set to true
+                    if (preg_match("/$reportname/", find_best_location_in_include_path( "templates/". $reportname )))
+                        $template = $reportname;
+                    else if ( $this->user_template )
+                        $template = $this->user_template."_prepare.tpl";
+                    else
+                        $template = "prepare.tpl";
+                    if ( $this->return_output_to_caller )
+                    {
+				        $txt = $this->panels["MAIN"]->smarty->fetch($template);
+		                $old_error_handler = set_error_handler("\\reportico\\reportico\\components\\ErrorHandler");
+                        return $txt;
+                    }
+                    else
+                    {
+				        $this->panels["MAIN"]->smarty->display($template);
+		                $old_error_handler = set_error_handler("\\reportico\\reportico\\components\\ErrorHandler");
+                    }
                 }
                 else
                 {	
@@ -4215,18 +4344,27 @@ class reportico extends reportico_object
 						    $reportname = preg_replace("/.xml/", "", $this->xmloutfile.'_execute.tpl');
                             restore_error_handler();
 
-						    if (preg_match("/$reportname/", find_best_location_in_include_path( "templates/". $reportname )))
-						    {
-							    $this->panels["MAIN"]->smarty->display($reportname);
-						    }
-						    else
-							    if ( $this->user_template )
-								    $this->panels["MAIN"]->smarty->display($this->user_template.'_execute.tpl');
-							    else
-							    {
-								    $this->panels["MAIN"]->smarty->display('execute.tpl');
-							    }
-	                        $old_error_handler = set_error_handler("\\reportico\\reportico\\components\\ErrorHandler");
+                            // Some calling frameworks require output to be returned
+                            // for rendering inside web pages .. in this case
+                            // return_output_to_caller will be set to true
+                            if (preg_match("/$reportname/", find_best_location_in_include_path( "templates/". $reportname )))
+                                $template = $reportname;
+                            else if ( $this->user_template )
+                                $template = $this->user_template."_execute.tpl";
+                            else
+                                $template = "execute.tpl";
+                            if ( $this->return_output_to_caller )
+                            {
+                                $txt = $this->panels["MAIN"]->smarty->fetch($template);
+                                $old_error_handler = set_error_handler("\\reportico\\reportico\\components\\ErrorHandler");
+                                return $txt;
+                            }
+                            else
+                            {
+                                $this->panels["MAIN"]->smarty->display($template);
+                                $old_error_handler = set_error_handler("\\reportico\\reportico\\components\\ErrorHandler");
+                            }
+
 						}
 					}
 				}
@@ -4510,7 +4648,6 @@ class reportico extends reportico_object
 	// -----------------------------------------------------------------------------
 	function execute_query($in_criteria_name)
 	{
-
 		global $g_code_area;
 		global $g_code_source;
 		global $g_error_status;
@@ -4616,6 +4753,7 @@ class reportico extends reportico_object
 			    $code = "if ( \$_connection )". $code;
 			    $code = "\$_pdo = false;". $code;
 			    $code = "\$_connection =& \$this->datasource->ado_connection;". $code;
+$code = "namespace reportico\\reportico\\components;". $code;
     
 			    // set to the user defined error handler
 			    global $g_eval_code;
@@ -4687,7 +4825,7 @@ class reportico extends reportico_object
 		        if ( !$g_error_status && $conn != false )
 			        $recordSet = $conn->Execute($this->query_statement) ;
             }
-            catch ( PDOException $ex)
+            catch ( \PDOException $ex)
             {
                 $errorCode = $ex->getCode();
                 $errorMessage = $ex->getMessage();
@@ -4714,9 +4852,11 @@ class reportico extends reportico_object
 			return;
 		}
 
+
         // Main Query Result Fetching
 		$this->query_count = 0;
 		while (!$recordSet->EOF) {
+
 			$line = $recordSet->FetchRow();
             if ( $line == null )
             {
@@ -5474,6 +5614,7 @@ class reportico extends reportico_object
         foreach ( $menu as $k => $v )
         {
             $project = $v["project"];
+            $initproject = $v["project"];
             $projtitle = "<AUTO>";
             if ( isset ( $v["title"] ) )
                 $projtitle = $v["title"];
@@ -5487,8 +5628,10 @@ class reportico extends reportico_object
                         $proj_parent = $this->projects_folder;
                     else
                         $proj_parent = find_best_location_in_include_path( $this->projects_folder );
+                    $project = $initproject;
                     if ( isset ($menuitem["project"] ) )
                         $project = $menuitem["project"];
+
                     $filename = $proj_parent."/".$project."/".$menuitem["reportfile"];
                     if ( !preg_match("/\.xml/", $filename ) ) $filename .= ".xml";
                     if (is_file($filename)) 
@@ -5496,6 +5639,7 @@ class reportico extends reportico_object
                         $query = false;
                         $repxml = new reportico_xml_reader($query, $filename, false, "ReportTitle");
                         $menu[$k]["items"][$k1]["reportname"] = sw_translate($repxml->search_response);
+                        $menu[$k]["items"][$k1]["project"] = $project;
                     }
                 }
             }
@@ -6124,6 +6268,77 @@ class reportico_criteria_column extends reportico_query_column
 		$this->lookup_query->execute_query($this->query_name);
 		$g_code_area = "";
 	}
+
+
+    // -----------------------------------------------------------------------------
+	// -----------------------------------------------------------------------------
+	function criteria_summary_text(&$label, &$value)
+    {
+        $label = "";
+        $value = "";
+
+        if ( isset($this->criteria_summary) && $this->criteria_summary )
+        {
+            $label = $this->derive_attribute("column_title", $this->query_name);
+            $value = $this->criteria_summary;
+        }
+        else
+        {
+        if ( get_request_item($name."_FROMDATE_DAY", "" ) )
+        {
+            $label = $this->derive_attribute("column_title", $this->query_name);
+            $label = sw_translate($label);
+            $mth = get_request_item($name."_FROMDATE_MONTH","") + 1;
+            $value = get_request_item($name."_FROMDATE_DAY","")."/".
+            $mth."/".
+            get_request_item($name."_FROMDATE_YEAR","");
+            if ( get_request_item($name."_TODATE_DAY", "" ) )
+            {
+                $mth = get_request_item($name."_TODATE_MONTH","") + 1;
+                $value .= "-";
+                $value .= get_request_item($name."_TODATE_DAY","")."/".
+                $mth."/".
+                get_request_item($name."_TODATE_YEAR","");
+            }
+        }
+        else if ( get_request_item("MANUAL_".$name."_FROMDATE", "" ) )
+        {
+            $label = $this->derive_attribute("column_title", $this->query_name);
+            $label = sw_translate($label);
+            $value = get_request_item("MANUAL_".$name."_FROMDATE","");
+            if ( get_request_item("MANUAL_".$name."_TODATE", "" ) )
+            {
+                $value .= "-";
+                $value .= get_request_item("MANUAL_".$name."_TODATE");
+            }
+
+        }
+        else if ( get_request_item("HIDDEN_".$name."_FROMDATE", "" ) )
+        {
+            $label = $this->derive_attribute("column_title", $this->query_name);
+            $label = sw_translate($label);
+            $value = get_request_item("HIDDEN_".$name."_FROMDATE","");
+            if ( get_request_item("HIDDEN_".$name."_TODATE", "" ) )
+            {
+                $value .= "-";
+                $value .= get_request_item("HIDDEN_".$name."_TODATE");
+            }
+
+        }
+        else if ( get_request_item("EXPANDED_".$name, "" ) )
+        {
+            $label = $this->derive_attribute("column_title", $this->query_name);
+            $label = sw_translate($label);
+            $value .= implode(get_request_item("EXPANDED_".$name, ""),",");
+        }
+        else if ( get_request_item("MANUAL_".$name, "" ) )
+        {
+            $label = $this->derive_attribute("column_title", $this->query_name);
+            $label = sw_translate($label);
+            $value .= get_request_item("MANUAL_".$name, "");
+        }
+        }
+    }
 
 	// -----------------------------------------------------------------------------
 	// Function : criteria_summary_display
@@ -6816,6 +7031,23 @@ class reportico_criteria_column extends reportico_query_column
  						$text .= '<SELECT class="'.$this->lookup_query->getBootstrapStyle('design_dropdown').'swPrpDropSelect" name="'.$tag_pref.$this->query_name.'[]" size="'.$multisize.'" multiple>';
 						break;
 
+				case "SELECT2MULTIPLE":
+				case "SELECT2SINGLE":
+						$res =& $this->lookup_query->targets[0]->results;
+						$k = key($res);
+						$multisize = 4;
+						if ( $res && count($res[$k]) > 4 )
+							$multisize = count($res[$k]);
+                        if ( isset ( $res[$k] ) )
+						    if ( count($res[$k]) >= 10 )
+							    $multisize = 10;
+                        if ( $type == "SELECT2MULTIPLE" )
+ 						    $text .= '<SELECT class="'.$this->lookup_query->getBootstrapStyle('design_dropdown').'swPrpDropSelect2" name="'.$tag_pref.$this->query_name.'[]" size="'.$multisize.'" multiple>';
+                        else
+ 						    $text .= '<SELECT class="'.$this->lookup_query->getBootstrapStyle('design_dropdown').'swPrpDropSelect2" name="'.$tag_pref.$this->query_name.'[]" size="'.$multisize.'" >';
+					    $text .= '<OPTION></OPTION>';
+						break;
+
 				case "CHECKBOX":
 				case "RADIO":
 						break;
@@ -6891,6 +7123,11 @@ class reportico_criteria_column extends reportico_query_column
 					$text .= '<OPTION label="'.$lab.'" value="'.$ret.'" '.$checked.'>'.$lab.'</OPTION>';
 					break;
 
+				case "SELECT2MULTIPLE":
+				case "SELECT2SINGLE":
+					$text .= '<OPTION label="'.$lab.'" value="'.$ret.'" '.$checked.'>'.$lab.'</OPTION>';
+					break;
+
 				case "RADIO":
     				$text .= '<INPUT type="radio" name="'.$tag_pref.$this->query_name.'" value="'.$ret.'" '.$checked.'>'.sw_translate($lab).'<BR>';
 					break;
@@ -6909,6 +7146,11 @@ class reportico_criteria_column extends reportico_query_column
 
 		switch ( $type )
 		{
+				case "SELECT2MULTIPLE":
+				case "SELECT2SINGLE":
+ 						$text .= '</SELECT>';
+						break;
+
 				case "MULTI":
  						$text .= '</SELECT>';
 						break;
@@ -6962,9 +7204,9 @@ class reportico_criteria_column extends reportico_query_column
 		return $text;
 	}
 	// -----------------------------------------------------------------------------
-	// Function : lookup_display
+	// Function : lookup_ajax
 	// -----------------------------------------------------------------------------
-	function & lookup_display($in_is_expanding)
+	function & lookup_ajax($in_is_expanding)
 	{
 
 		$text = "";
@@ -7047,6 +7289,11 @@ class reportico_criteria_column extends reportico_query_column
 				case "ANYCHAR":
 				case "TEXTFIELD":
  						$text .= '<SELECT style="display:none" name="'."HIDDEN_".$this->query_name.'[]" size="0" multiple>';
+						break;
+
+				case "SELECT2MULTIPLE":
+				case "SELECT2SINGLE":
+						$text .= '{"items": [';
 						break;
 
 				case "MULTI":
@@ -7163,6 +7410,13 @@ class reportico_criteria_column extends reportico_query_column
    					$text .= '<OPTION label="'.$lab.'" value="'.$ret.'" '.$checked.'>'.$lab.'</OPTION>';
 					break;
 
+				case "SELECT2MULTIPLE":
+				case "SELECT2SINGLE":
+                    if ( $i > 0 )
+                        $text .= ",";
+   					$text .= "{\"id\":\"$ret\", \"text\":\"$lab\"}";
+					break;
+
 				case "RADIO":
     				$text .= '<INPUT type="radio" name="'.$tag_pref.$this->query_name.'" value="'.$ret.'" '.$checked.'>'.$lab.'<BR>';
 					break;
@@ -7184,6 +7438,302 @@ class reportico_criteria_column extends reportico_query_column
 		switch ( $type )
 		{
 				case "MULTI":
+ 						$text .= '</SELECT>';
+						break;
+
+				case "SELECT2MULTIPLE":
+				case "SELECT2SINGLE":
+ 						$text .= ']}';
+						break;
+
+				case "CHECKBOX":
+				case "RADIO":
+						break;
+
+				default:
+ 						$text .= '</SELECT>';
+						break;
+		}
+
+		if ( !$in_is_expanding )
+		{
+		
+			if ( array_key_exists("EXPAND_".$this->query_name, $_REQUEST) ||
+				array_key_exists("EXPANDCLEAR_".$this->query_name, $_REQUEST) ||
+				array_key_exists("EXPANDSELECTALL_".$this->query_name, $_REQUEST) ||
+				array_key_exists("EXPANDSEARCH_".$this->query_name, $_REQUEST) ||
+				$this->criteria_display == "NOINPUT" )
+			//if ( $this->criteria_display == "NOINPUT" )
+			{
+				$tag = $value_string;
+				if ( strlen($tag) > 40 )
+					$tag = substr($tag, 0, 40)."...";
+	
+				if ( !$tag )
+					$tag = "ANY";
+	
+				$text .= $tag;
+			}
+			else if ( $this->criteria_display == "ANYCHAR" || $this->criteria_display == "TEXTFIELD" )
+			{
+				if ( $manual_override && !$value_string )
+                {
+					$value_string = $_REQUEST["MANUAL_".$this->query_name];
+                }
+
+				$tag = "";
+				$tag .= '<input  type="text" class="'.$this->lookup_query->getBootstrapStyle('textfield').'swPrpTextField" name="MANUAL_'.$this->query_name.'"';
+				$tag .= ' value="'.$value_string.'">';
+				$text .= $tag;
+			}
+		}
+
+		return $text;
+	}
+	// -----------------------------------------------------------------------------
+	// Function : lookup_display
+	// -----------------------------------------------------------------------------
+	function & lookup_display($in_is_expanding)
+	{
+
+		$text = "";
+		if ( $in_is_expanding )
+		{	
+			$tag_pref = "EXPANDED_";
+			$type = $this->expand_display;
+		}
+		else
+		{	
+			$tag_pref = "";
+			$type = $this->criteria_display;
+		}
+
+		$value_string = "";
+
+		$params = array();
+		$manual_params = array();
+		$hidden_params = array();
+		$expanded_params = array();
+		$manual_override = false;
+
+		if ( !array_key_exists("clearform", $_REQUEST) )
+		{
+			if ( ! array_key_exists("EXPANDED_".$this->query_name, $_REQUEST) )
+				if ( array_key_exists($this->query_name, $_REQUEST) )
+				{
+						$params = $_REQUEST[$this->query_name];
+						if ( !is_array($params) )
+							$params = array ( $params );
+				}
+
+			$hidden_params = array();
+			if ( ! array_key_exists("EXPANDED_".$this->query_name, $_REQUEST) )
+				if ( array_key_exists("HIDDEN_".$this->query_name, $_REQUEST) )
+				{
+						$hidden_params = $_REQUEST["HIDDEN_".$this->query_name];
+						if ( !is_array($hidden_params) )
+							$hidden_params = array ( $hidden_params );
+				}
+
+			$manual_params = array();
+			if ( ! array_key_exists("EXPANDED_".$this->query_name, $_REQUEST) )
+				if ( array_key_exists("MANUAL_".$this->query_name, $_REQUEST) )
+				{
+					$manual_params = explode(',',$_REQUEST["MANUAL_".$this->query_name]);
+					if ( $manual_params )
+					{
+						$hidden_params = $manual_params;
+						$manual_override = true;
+					}
+				}
+
+			// If this is first time into screen and we have defaults then
+			// use these instead
+			if ( !$hidden_params && get_reportico_session_param("firstTimeIn") )
+			{
+				$hidden_params = $this->defaults;
+				$manual_params = $this->defaults;
+			}
+
+			$expanded_params = array();
+			if ( array_key_exists("EXPANDED_".$this->query_name, $_REQUEST) )
+			{
+					$expanded_params = $_REQUEST["EXPANDED_".$this->query_name];
+					if ( !is_array($expanded_params) )
+						$expanded_params = array ( $expanded_params );
+			}
+		}
+		else
+		{
+			$hidden_params = $this->defaults;
+			$manual_params = $this->defaults;
+			$params = $this->defaults;
+		}
+
+		switch ( $type )
+		{
+				case "NOINPUT":
+				case "ANYCHAR":
+				case "TEXTFIELD":
+ 						$text .= '<SELECT style="display:none" name="'."HIDDEN_".$this->query_name.'[]" size="0" multiple>';
+						break;
+
+				case "SELECT2MULTIPLE":
+				case "SELECT2SINGLE":
+                        if ( $type == "SELECT2SINGLE" )
+						    $text .= '<SELECT id="select2_dropdown_'.$this->query_name.'" class="'.$this->lookup_query->getBootstrapStyle('design_dropdown').'swPrpDropSelect" name="'.$tag_pref.$this->query_name.'[]" >';
+                        else
+						    $text .= '<SELECT id="select2_dropdown_'.$this->query_name.'" class="'.$this->lookup_query->getBootstrapStyle('design_dropdown').'swPrpDropSelect" name="'.$tag_pref.$this->query_name.'[]" multiple>';
+					    $text .= '<OPTION></OPTION>';
+						break;
+
+				case "MULTI":
+						$multisize = 12;
+						$res =& $this->lookup_query->targets[0]->results;
+						$k = key($res);
+						$multisize = 4;
+						if ( $res && count($res[$k]) > 4 )
+							$multisize = count($res[$k]);
+                        if ( isset ( $res[$k] ) )
+						    if ( count($res[$k]) >= 10 )
+							    $multisize = 10;
+						if ( $in_is_expanding )
+							$multisize = 12;
+						$text .= '<SELECT class="'.$this->lookup_query->getBootstrapStyle('design_dropdown').'swPrpDropSelect" name="'.$tag_pref.$this->query_name.'[]" size="'.$multisize.'" multiple>';
+						break;
+
+				case "CHECKBOX":
+				case "RADIO":
+						break;
+
+				default:
+ 						$text .= '<SELECT class="'.$this->lookup_query->getBootstrapStyle('design_dropdown').'swPrpDropSelectRegular" name="'.$tag_pref.$this->query_name.'">';
+						break;
+		}
+
+		$check_text = "";
+		switch ( $type )
+		{
+			case "MULTI":
+			case "DROPDOWN":
+			case "ANYCHAR":
+			case "TEXTFIELD":
+			case "NOINPUT":
+				$check_text = "selected";
+				break;
+
+			default:
+				$check_text = "checked";
+				break;
+		}
+
+		// If clear has been pressed we dont want any list items selected
+		if ( $this->submitted('EXPANDCLEAR_'.$this->query_name) ) 
+			$check_text = "";
+			
+		// If select all has been pressed we want all highlighted
+		$selectall = false;
+		if ( $this->submitted('EXPANDSELECTALL_'.$this->query_name) ) 
+			$selectall = true;
+
+		$res =& $this->lookup_query->targets[0]->results;
+		if ( !$res )
+		{
+			$res = array();
+			$k = 0;
+		}
+		else
+		{
+			reset($res);
+			$k = key($res);
+		for ($i = 0; $i < count($res[$k]); $i++ )
+		{
+			$line =&$res[$i];
+			foreach ( $this->lookup_query->columns as $ky => $col )
+			{
+				if ( $col->lookup_display_flag )
+				{
+					$lab = $res[$col->query_name][$i];
+				}
+				if ( $col->lookup_return_flag )
+					$ret = $res[$col->query_name][$i];
+				if ( $col->lookup_abbrev_flag )
+					$abb = $res[$col->query_name][$i];
+				
+			}
+       			//$text .= '<OPTION label="'.$ret.'" value="'.$ret.'">'.$lab.'</OPTION>';
+			$checked="";
+
+			if ( in_array($ret, $params) )
+			{
+				$checked = $check_text;
+			}
+
+			if ( in_array($ret, $hidden_params) && !$manual_override )
+			{
+				$checked = $check_text;
+			}
+
+			if ( in_array($ret, $expanded_params) )
+			{
+				$checked = $check_text;
+			}
+
+			if ( in_array($abb, $hidden_params) && $manual_override )
+			{
+				$checked = $check_text;
+			}
+
+			if ( $selectall )
+			{
+				$checked = $check_text;
+			}
+
+			if ( $checked != "" )
+				if ( !$value_string && $value_string != "0" )
+					$value_string = $abb;
+				else
+					$value_string .= ",".$abb;
+
+			switch ( $type )
+			{
+				case "MULTI":
+   					$text .= '<OPTION label="'.$lab.'" value="'.$ret.'" '.$checked.'>'.$lab.'</OPTION>';
+					break;
+
+				case "SELECT2MULTIPLE":
+				case "SELECT2SINGLE":
+                    ////if ( $checked )
+                        //$checked = "checked=1";
+   					$text .= '<OPTION label="'.$lab.'" value="'.$ret.'" '.$checked.'>'.$lab.'</OPTION>';
+					break;
+
+				case "RADIO":
+    				$text .= '<INPUT type="radio" name="'.$tag_pref.$this->query_name.'" value="'.$ret.'" '.$checked.'>'.$lab.'<BR>';
+					break;
+
+				case "CHECKBOX":
+    					$text .= '<INPUT type="checkbox" name="'.$tag_pref.$this->query_name.'[]" value="'.$ret.'" '.$checked.'>'.$lab.'<BR>';
+					break;
+
+				default:
+                    if ( $i == 0 )
+			            $text .= '<OPTION label="" value=""></OPTION>';
+   					$text .= '<OPTION label="'.$lab.'" value="'.$ret.'" '.$checked.'>'.$lab.'</OPTION>';
+					break;
+				}
+
+		}
+		}
+
+		switch ( $type )
+		{
+				case "MULTI":
+ 						$text .= '</SELECT>';
+						break;
+
+				case "SELECT2MULTIPLE":
+				case "SELECT2SINGLE":
  						$text .= '</SELECT>';
 						break;
 
@@ -7501,7 +8051,6 @@ class reportico_criteria_column extends reportico_query_column
 			case "LOOKUP":
 				if ( $add_del )
 					$del = $this->get_value_delimiter();
-
 				if ( !is_array($this->column_value) )
 					$this->column_value = explode(',', $this->column_value);
 
@@ -7732,6 +8281,7 @@ class reportico_criteria_column extends reportico_query_column
 					)
 				{
 
+                    // Dont bother running select ofr criteria lookup if criteria item is a dynamic
 					$this->execute_criteria_lookup();
 				}
 				$text .= $this->lookup_display(false);
@@ -7870,8 +8420,10 @@ class reportico_assignment extends reportico_object
 				{
 					$crit = substr ( $crit, 1 );
 					$critexp = $crit;
+                    $clause = ""; 
+                    $label = ""; 
 					if ( array_key_exists($crit, $in_query->lookup_queries) )
-						$clause = $in_query->lookup_queries[$crit]->get_criteria_clause(false, false, true);
+						$clause = $in_query->lookup_queries[$crit]->criteria_summary_text($label,$clause);
 					else if ( $cl = get_query_column($crit, $this->query->columns ) )
 						if ( $prev_col_value )
 							$clause = $cl->old_column_value;
@@ -7888,6 +8440,13 @@ class reportico_assignment extends reportico_object
 					$eltype = "VALUE";
                     $showquotes = true;
 					if ( preg_match ( "/(.*),(.*),(.*)/", $crit, $critel ) )
+					{
+							$crit = $critel[1];
+							$eltype = $critel[2];
+							if ( $critel[3] == "false" )
+                                $showquotes = false;
+					}
+					if ( preg_match ( "/(.*);(.*);(.*)/", $crit, $critel ) )
 					{
 							$crit = $critel[1];
 							$eltype = $critel[2];

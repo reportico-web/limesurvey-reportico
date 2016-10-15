@@ -344,7 +344,6 @@ class reportico_graph
 
             $js .= "values = [";
 
-            $xlabels = array();
             $plotct1 = 0;
             foreach ( $v["data"] as $k1 => $v1 )
             {
@@ -355,48 +354,13 @@ class reportico_graph
                 if ( $v["type"] == "SCATTER" && $k < count($this->plot) - 1)
                 {
                     $yvalue = $this->plot[$k+1]["data"][$k1];
-                    if ( isset($this->plot[$k+3]) )
-                    {
-                        if ( !isset ( $xlabels[$this->plot[$k]["data"][$k1]] ) )
-                            $xlabels[$this->plot[$k]["data"][$k1]] = $this->plot[$k+3]["data"][$k1];
-            
-                    }
-                    if ( isset($this->plot[$k+2]))
-                    {
-                        $yvalue = (int)$yvalue;
-                        $rvalue = $this->plot[$k+2]["data"][$k1] * 20;
-                        $js .= "{index: $k1, series: 0, x: $v1, y: $yvalue, size: $rvalue, key: 'ee', value: \"oo\"}";
-                    }
-                    else
-                    {
-                        $rvalue = $this->plot[$k+2]["data"][$k1];
-                        $yvalue = (int)$yvalue;
-                        echo "y = $yvalue<BR>";
-                        $js .= "{index: $k1, series: 0, x: $v1, y: $yvalue, value: $v1}";
-                    }
+                    $js .= "{index: $k1, series: 0, x: $v1, y: $yvalue, label: \"$xlabel\", value: $v1}";
                 }
                 else
                     $js .= "{index: $k1, series: 0, x: $key, y: $v1, label: \"$xlabel\", value: $v1}";
                 $plotct1++;
             }
             $js .= "];\n";
-
-            $xlabelsjs  = "";
-            $xlabelsjsticks  = "";
-            if ( $xlabels )
-            {
-                $xlabelsjs = "var labels = [];";
-                foreach ( $xlabels as $xk => $xv )
-                {
-                    $xlabelsjs .= "labels[$xk] = '$xv';";
-                    if ( !$xlabelsjsticks )
-                        $xlabelsjsticks = "['$xv'";
-                    else
-                        $xlabelsjsticks .= ",'$xv'";
-                }
-                $xlabelsjsticks .= "]";
-            }
-            //echo $xlabelsjsticks."<BR>" ;
 
             if ( $v["type"] == "OVERLAYBAR" ) $type = "bar";
             if ( $v["type"] == "STACKEDBAR" ) $type = "bar";
@@ -419,7 +383,7 @@ class reportico_graph
             if ( $v["type"] == "SCATTER" )
             {
                 $k++;
-                break;
+                continue;
             }
         }
 
@@ -614,11 +578,8 @@ class reportico_graph
         {
             $js .= "
             var chart".$session_placeholder." = nv.models.scatterChart()
-                .forceY([1,2400])
-                //.showDistX(false)    //showDist, when true, will display those little distribution lines on the axis.
-                //.showDistY(false)
-            //.reduceXTicks (labelInterval)
-            .labelCount(labelCount)
+                .showDistX(false)    //showDist, when true, will display those little distribution lines on the axis.
+                .showDistY(false)
                 .transitionDuration(350)
                 .color(d3.scale.category10().range())
                 .margin({top: ".$this->margintop_actual.", right: ".$this->marginright_actual.", bottom: ".$this->marginbottom_actual.", left: ".$this->marginleft_actual." + 10})
@@ -631,55 +592,9 @@ class reportico_graph
                 return '<h3>' + key + '</h3>';
             });
 
-            //xScale = d3.scale.ordinal();
-            //xScale.domain($xlabelsjsticks).range(range)
-
             //Axis settings
-            //chart".$session_placeholder.".xAxis.tickFormat(d3.format('.02f'));
-            chart".$session_placeholder.".xAxis
-                //scale(xScale)
-                //.showMaxMin(true)
-                //.tickValues( $xlabelsjsticks)
-                .ticks(10)
-                .rotateLabels (rotateLabels)    
-                .staggerLabels(false)
-                .tickFormat(function (d, i, j) 
-                { 
-                    //////alert( \"$xlabelsjs \");
-                    $xlabelsjs
-////alert(labels + '\\n' +  ( d ) + ' = ' + labels[d] + ' i = ' + i + ' j = ' + j);
-                    return labels[d];
-                } )
-            ;
-
-            chart".$session_placeholder.".yAxis
-                .tickFormat(function (d, i, j) 
-                { 
-                    //alert( d + \" \" + i);  
-                    var final = '';
-                    if ( d < 1000 )
-                        final = '0' + d  ;
-                    else
-                        final = '' + d;
-                    var final1 = final.substring(0,2) + ':' + final.substring(2,4);
-                    return final1;
-                } )
-            ;
-
-            //chart".$session_placeholder.".dispatch.on('elementClick', function(e) {
-                //alert('oo');
-            //});
-
-            //d3.selectAll('circle')
-                //.data(datafiltered).enter().append('svg:circle')
-                //.append('svg:title')
-                //.text(function(d) { return d.x; });
-
-            //reportico_jquery('circle').on('click', 
-                //function(d){
-                    //alert(d);
-                //})
-
+            chart".$session_placeholder.".xAxis.tickFormat(d3.format('.02f'));
+            chart".$session_placeholder.".yAxis.tickFormat(d3.format('.02f'));
 
             //We want to show shapes other than circles.
             chart".$session_placeholder.".scatter.onlyCircles(false);
@@ -688,18 +603,12 @@ class reportico_graph
             .datum(reportico_datasets". $session_placeholder.")
             .transition().duration(0)
             .call(chart".$session_placeholder.");
-
-            //d3.select(\"#reportico_chart". $session_placeholder." svg\")
-            //.datum(reportico_datasets". $session_placeholder."[0].values)
-            //.transition().duration(0)
-            //.call(chart".$session_placeholder.");
     
-            var chart".$session_placeholder." = nv.models.scatterChart()
-            //d3.selectAll(\"rect.nv-bar\")
-                //.style(\"fill-opacity\", function (d, i) { //d is the data bound to the svg element
-                    //return .5 ; 
-                //})
-
+            d3.selectAll(\"rect.nv-bar\")
+                .style(\"fill-opacity\", function (d, i) { //d is the data bound to the svg element
+                    return .5 ; 
+                })
+    
             nv.utils.windowResize(chart".$session_placeholder.".update);
             ";
 

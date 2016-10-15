@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.26, created on 2016-07-28 23:07:56
+<?php /* Smarty version 2.6.26, created on 2016-10-15 19:48:19
          compiled from menu.tpl */ ?>
 <?php if (! $this->_tpl_vars['REPORTICO_AJAX_CALLED']): ?>
 <?php if (! $this->_tpl_vars['EMBEDDED_REPORT']): ?>
@@ -11,11 +11,11 @@
 ">
 <?php if ($this->_tpl_vars['BOOTSTRAP_STYLES']): ?>
 <?php if ($this->_tpl_vars['BOOTSTRAP_STYLES'] == '2'): ?>
-<LINK id="bootstrap_css" REL="stylesheet" TYPE="text/css" HREF="<?php echo $this->_tpl_vars['STYLESHEETDIR']; ?>
-/bootstrap2/bootstrap.min.css">
+<LINK id="bootstrap_css" REL="stylesheet" TYPE="text/css" HREF="<?php echo $this->_tpl_vars['JSPATH']; ?>
+/bootstrap2/css/bootstrap.min.css">
 <?php else: ?>
-<LINK id="bootstrap_css" REL="stylesheet" TYPE="text/css" HREF="<?php echo $this->_tpl_vars['STYLESHEETDIR']; ?>
-/bootstrap3/bootstrap.min.css">
+<LINK id="bootstrap_css" REL="stylesheet" TYPE="text/css" HREF="<?php echo $this->_tpl_vars['JSPATH']; ?>
+/bootstrap3/css/bootstrap.min.css">
 <?php endif; ?>
 <?php endif; ?>
 <?php echo $this->_tpl_vars['OUTPUT_ENCODING']; ?>
@@ -28,11 +28,11 @@
 <?php if ($this->_tpl_vars['BOOTSTRAP_STYLES']): ?>
 <?php if (! $this->_tpl_vars['REPORTICO_BOOTSTRAP_PRELOADED']): ?>
 <?php if ($this->_tpl_vars['BOOTSTRAP_STYLES'] == '2'): ?>
-<LINK id="bootstrap_css" REL="stylesheet" TYPE="text/css" HREF="<?php echo $this->_tpl_vars['STYLESHEETDIR']; ?>
-/bootstrap2/bootstrap.min.css">
+<LINK id="bootstrap_css" REL="stylesheet" TYPE="text/css" HREF="<?php echo $this->_tpl_vars['JSPATH']; ?>
+/bootstrap2/css/bootstrap.min.css">
 <?php else: ?>
-<LINK id="bootstrap_css" REL="stylesheet" TYPE="text/css" HREF="<?php echo $this->_tpl_vars['STYLESHEETDIR']; ?>
-/bootstrap3/bootstrap.min.css">
+<LINK id="bootstrap_css" REL="stylesheet" TYPE="text/css" HREF="<?php echo $this->_tpl_vars['JSPATH']; ?>
+/bootstrap3/css/bootstrap.min.css">
 <?php endif; ?>
 <?php endif; ?>
 <?php endif; ?>
@@ -71,10 +71,10 @@
 
 <?php if ($this->_tpl_vars['BOOTSTRAP_STYLES'] == '2'): ?>
 <script type="text/javascript" src="<?php echo $this->_tpl_vars['JSPATH']; ?>
-/bootstrap2/bootstrap.min.js"></script>
+/bootstrap2/js/bootstrap.min.js"></script>
 <?php else: ?>
 <script type="text/javascript" src="<?php echo $this->_tpl_vars['JSPATH']; ?>
-/bootstrap3/bootstrap.min.js"></script>
+/bootstrap3/js/bootstrap.min.js"></script>
 <?php endif; ?>
 <?php endif; ?>
 <?php endif; ?>
@@ -153,10 +153,15 @@
 <?php echo '
 <script type="text/javascript" src="'; ?>
 <?php echo $this->_tpl_vars['JSPATH']; ?>
+<?php echo '/select2/js/select2.min.js"></script>
+<script type="text/javascript" src="'; ?>
+<?php echo $this->_tpl_vars['JSPATH']; ?>
 <?php echo '/jquery.dataTables.js"></script>
 '; ?>
 
-<LINK id="PRP_StyleSheet" REL="stylesheet" TYPE="text/css" HREF="<?php echo $this->_tpl_vars['STYLESHEETDIR']; ?>
+<LINK id="PRP_StyleSheet_s2" REL="stylesheet" TYPE="text/css" HREF="<?php echo $this->_tpl_vars['JSPATH']; ?>
+/select2/css/select2.min.css">
+<LINK id="PRP_StyleSheet_dt" REL="stylesheet" TYPE="text/css" HREF="<?php echo $this->_tpl_vars['STYLESHEETDIR']; ?>
 /jquery.dataTables.css">
 <?php endif; ?>
 <?php if ($this->_tpl_vars['REPORTICO_CHARTING_ENGINE'] == 'NVD3'): ?>
@@ -176,6 +181,38 @@
 <?php endif; ?>
 <?php endif; ?>
 <div id="reportico_container">
+    <script>
+        reportico_criteria_items = [];
+<?php if (isset ( $this->_tpl_vars['CRITERIA_ITEMS'] )): ?>
+<?php unset($this->_sections['critno']);
+$this->_sections['critno']['name'] = 'critno';
+$this->_sections['critno']['loop'] = is_array($_loop=$this->_tpl_vars['CRITERIA_ITEMS']) ? count($_loop) : max(0, (int)$_loop); unset($_loop);
+$this->_sections['critno']['show'] = true;
+$this->_sections['critno']['max'] = $this->_sections['critno']['loop'];
+$this->_sections['critno']['step'] = 1;
+$this->_sections['critno']['start'] = $this->_sections['critno']['step'] > 0 ? 0 : $this->_sections['critno']['loop']-1;
+if ($this->_sections['critno']['show']) {
+    $this->_sections['critno']['total'] = $this->_sections['critno']['loop'];
+    if ($this->_sections['critno']['total'] == 0)
+        $this->_sections['critno']['show'] = false;
+} else
+    $this->_sections['critno']['total'] = 0;
+if ($this->_sections['critno']['show']):
+
+            for ($this->_sections['critno']['index'] = $this->_sections['critno']['start'], $this->_sections['critno']['iteration'] = 1;
+                 $this->_sections['critno']['iteration'] <= $this->_sections['critno']['total'];
+                 $this->_sections['critno']['index'] += $this->_sections['critno']['step'], $this->_sections['critno']['iteration']++):
+$this->_sections['critno']['rownum'] = $this->_sections['critno']['iteration'];
+$this->_sections['critno']['index_prev'] = $this->_sections['critno']['index'] - $this->_sections['critno']['step'];
+$this->_sections['critno']['index_next'] = $this->_sections['critno']['index'] + $this->_sections['critno']['step'];
+$this->_sections['critno']['first']      = ($this->_sections['critno']['iteration'] == 1);
+$this->_sections['critno']['last']       = ($this->_sections['critno']['iteration'] == $this->_sections['critno']['total']);
+?>
+        reportico_criteria_items.push("<?php echo $this->_tpl_vars['CRITERIA_ITEMS'][$this->_sections['critno']['index']]['name']; ?>
+");
+<?php endfor; endif; ?>
+<?php endif; ?>
+    </script>
 <FORM class="swMenuForm" name="topmenu" method="POST" action="<?php echo $this->_tpl_vars['SCRIPT_SELF']; ?>
 ">
 <input type="hidden" name="reportico_session_name" value="<?php echo $this->_tpl_vars['SESSION_ID']; ?>

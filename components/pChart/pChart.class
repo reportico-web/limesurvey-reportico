@@ -588,8 +588,7 @@
       }
 
      /* Horizontal Axis */
-     // PPP $XPos = $this->GArea_X1 + $this->GAreaXOffset;
-     $XPos = $this->GArea_X1;
+     $XPos = $this->GArea_X1 + $this->GAreaXOffset;
      $ID = 1; $YMax = NULL;
      foreach ( $Data as $Key => $Values )
       {
@@ -1273,8 +1272,7 @@
                 }
               }
 
-             if ( $BigRadius )
-                $this->drawFilledCircle($XPos+1,$YPos+1,$BigRadius,$R,$G,$B);
+             $this->drawFilledCircle($XPos+1,$YPos+1,$BigRadius,$R,$G,$B);
 
              if ( $SmallRadius != 0 )
               {
@@ -1452,9 +1450,7 @@
 
        if ( $SerieName == "" || $SerieName == $ColName )
         {
-         // PPP $XPos  = $this->GArea_X1 + $this->GAreaXOffset;
-         $XPos  = $this->GArea_X1;
-         $LastValue = "";
+         $XPos  = $this->GArea_X1 + $this->GAreaXOffset;
          $XLast = -1;
          foreach ( $Data as $Key => $Values )
           {
@@ -1468,10 +1464,9 @@
               $this->addToImageMap($XPos-3,$YPos-3,$XPos+3,$YPos+3,$DataDescription["Description"][$ColName],$Data[$Key][$ColName].$DataDescription["Unit"]["Y"],"Line");
 
              if (!is_numeric($Value)) { $XLast = -1; }
-             if ( $XLast != -1 && !(empty($LastValue) && empty($Value)))
+             if ( $XLast != -1 )
               $this->drawLine($XLast,$YLast,$XPos,$YPos,$this->Palette[$ColorID]["R"],$this->Palette[$ColorID]["G"],$this->Palette[$ColorID]["B"],TRUE);
 
-             $LastValue = $Value;
              $XLast = $XPos;
              $YLast = $YPos;
              if (!is_numeric($Value)) { $XLast = -1; }

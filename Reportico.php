@@ -28,7 +28,7 @@ class Reportico extends \ls\pluginmanager\PluginBase {
     public function beforeAdminMenuRender()
     {
         $event = $this->getEvent();
-        $event->set('extraMenus', array(
+        $event->append('extraMenus', array(
         new ReporticoMainMenu(array(
             'isDropDown' => true,
             'menuItems' => array(
@@ -154,6 +154,9 @@ class Reportico extends \ls\pluginmanager\PluginBase {
         $this->engine->forward_url_get_parameters_dbimage = "reportico/dbimage";
 
         $this->engine->framework_parent = $this->configGet("framework_type");
+
+        // Indicates that reportico out should not be directly displayed and should instead be returned to the framework
+        $this->engine->return_output_to_caller = true;
 
         if ( Yii::app()->user->id )
             $this->engine->external_user = Yii::app()->user->id;

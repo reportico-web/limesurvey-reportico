@@ -1255,7 +1255,6 @@ class Smarty
             if ($this->_is_compiled($resource_name, $_smarty_compile_path)
                     || $this->_compile_resource($resource_name, $_smarty_compile_path))
             {
-
                 include($_smarty_compile_path);
             }
         } else {

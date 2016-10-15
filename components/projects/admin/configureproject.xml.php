@@ -75,7 +75,7 @@ if ( $_configure_mode != "DELETE" )
     $configparams["SW_OUTPUT_ENCODING"] = $_criteria["outputencoding"]->get_criteria_value("VALUE", false);
     $configparams["SW_LANGUAGE"] = $_criteria["language"]->get_criteria_value("VALUE", false);
 
-    if ( !$configparams["SW_DB_TYPE"] ) { trigger_error ( "Specify Database Type" ); return; }
+    if ( !$configparams["SW_DB_TYPE"] ) { trigger_error ( sw_translate("Specify Database Type") ); return; }
 
     $test = new reportico_datasource();
     $test->driver = $configparams["SW_DB_TYPE"];
@@ -87,8 +87,8 @@ if ( $_configure_mode != "DELETE" )
         //if ( !$configparams["SW_DB_HOST"] ) { trigger_error ( "Specify Database Host" ); return; }
     //}
 
-    if ( !$configparams["SW_PROJECT"] ) { trigger_error ( "Specify Project Name" ); return; }
-    if ( !$configparams["SW_PROJECT_TITLE"] ) { trigger_error ( "Specify Project Title" ); return; }
+    if ( !$configparams["SW_PROJECT"] ) { trigger_error ( sw_translate("Specify Project Name") ); return; }
+    if ( !$configparams["SW_PROJECT_TITLE"] ) { trigger_error ( sw_translate("Specify Project Title") ); return; }
 
     $g_debug_mode = true;
     $g_no_sql = true;

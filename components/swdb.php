@@ -39,7 +39,6 @@ use PDO;
 
 
 // Include the ADODB Database Abstraction Classes
-//if ( !function_exists("adodb_strftime") )
 include_once('reportico_adodb/adodb.inc.php');
 
 /**

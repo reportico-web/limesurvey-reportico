@@ -925,7 +925,7 @@ foreach ( $this->plot as $k => $v )
 
  		$graphImage->LineWidth = 1;
  		$graphImage->drawLineGraph($graphData->GetData(), $graphData->GetDataDescription());
- 		$graphImage->drawPlotGraph($graphData->GetData(), $graphData->GetDataDescription(), 0, 0);
+ 		$graphImage->drawPlotGraph($graphData->GetData(), $graphData->GetDataDescription());
  		$graphImage->LineWidth = 1;
 		break;
 	}
@@ -945,8 +945,7 @@ foreach ( $this->plot as $k => $v )
 	        //if ( $piechart )
  		        //$graphImage->drawPieLegend($this->width_pdf_actual - 180,30,$graphData->GetData(), $graphData->GetDataDescription(), 250, 250, 250); 
 	        if ( !$piechart )
- 		        // PPP $graphImage->drawLegend($this->width_pdf_actual - 120, 30,$graphData->GetDataDescription(), 254, 254, 254, 0, 0, 0 );
-                $graphImage->drawLegend($this->width_pdf_actual - 120 + 25, 30,$graphData->GetDataDescription(), 254, 254, 254, 0, 0, 0, 0, 0, 0, false);
+ 		        $graphImage->drawLegend($this->width_pdf_actual - 120, 30,$graphData->GetDataDescription(), 254, 254, 254, 0, 0, 0 );
 
             break;
         }
