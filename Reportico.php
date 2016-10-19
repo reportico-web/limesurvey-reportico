@@ -15,7 +15,7 @@ class Reportico extends \ls\pluginmanager\PluginBase {
         /**
          * Here you should handle subscribing to the events your plugin will handle
          */
-        //$this->subscribe('afterPluginLoad', 'adminPage');
+        //$this->subscribe('afterPluginLoad', 'admin');
         //$this->subscribe('afterPluginLoad', 'ajax');
         $this->subscribe('beforeAdminMenuRender');
         $this->subscribe('newDirectRequest');
@@ -40,7 +40,10 @@ class Reportico extends \ls\pluginmanager\PluginBase {
 
     }
 
-    public function adminPage() 
+    /*
+    * Load Reportico Admin Page
+    */
+    public function admin() 
     {
         //return "HelloWorld";
         $this->engine = $this->getReporticoEngine();
@@ -56,20 +59,64 @@ class Reportico extends \ls\pluginmanager\PluginBase {
         return $this->engine->execute();
     }
     
+    /*
+    * Load a project menu .. requires url parameter project=project name
+    */
+    public function menu() 
+    {
+        $this->engine = $this->getReporticoEngine();
+        $this->partialRender = Yii::app()->request->getQuery("partialReportico", false);
+
+        // Run reportico in admin mode
+        $this->engine->access_mode = "ONEPROJECT";
+        $this->engine->initial_execute_mode = "MENU";
+        $this->engine->initial_report = false;
+        $this->engine->clear_reportico_session = true;
+
+        return $this->engine->execute();
+    }
+    
+    /*
+    * Show a report in criteria entry mode .. requires url parameter project=project name&xmlin=reportname
+    */
+    public function report() 
+    {
+        $this->engine = $this->getReporticoEngine();
+        $this->partialRender = Yii::app()->request->getQuery("partialReportico", false);
+
+        // Run reportico in admin mode
+        $this->engine->access_mode = "ONEREPORT";
+        $this->engine->initial_execute_mode = "PREPARE";
+        $this->engine->initial_report = false;
+        $this->engine->clear_reportico_session = true;
+
+        return $this->engine->execute();
+    }
+    
+    /*
+    * Show report output .. requires url parameter project=project name&xmlin=reportname
+    */
+    public function output() 
+    {
+        $this->engine = $this->getReporticoEngine();
+        $this->partialRender = Yii::app()->request->getQuery("partialReportico", false);
+
+        // Run reportico in admin mode
+        $this->engine->access_mode = "REPORTOUTPUT";
+        $this->engine->initial_execute_mode = "EXECUTE";
+        $this->engine->initial_report = false;
+        $this->engine->clear_reportico_session = true;
+
+        return $this->engine->execute();
+    }
+    
     public function ajax() 
     {
         $this->engine = $this->getReporticoEngine();
 
         $this->partialRender = Yii::app()->request->getQuery("partialReportico", false);
 
-        // Run reportico in admin mode
-        //$this->engine->access_mode = "FULL";
-        //$this->engine->initial_execute_mode = "ADMIN";
-        //$this->engine->initial_project = "admin";
-        //$this->engine->initial_report = false;
-        //$this->engine->clear_reportico_session = true;
-            $this->engine->reportico_ajax_script_url = $_SERVER["SCRIPT_NAME"]."/plugins/direct?plugin=Reportico&function=ajax&dummy";
-//http://127.0.0.1/limesurvey/index.php/plugins/direct?plugin=Reportico&function=adminPage
+        // Run reportico ajax call
         echo $this->engine->execute();
         die;
     }
@@ -81,15 +128,7 @@ class Reportico extends \ls\pluginmanager\PluginBase {
         {
             //Yii::app()->getAssetManager()->forceCopy = true;
             $path = __DIR__."/assets";
-            $this->_assetsUrl = Yii::app()->getAssetManager()->publish(
-                //Yii::getPathOfAlias('plugins.Reportico.assets')
-                $path 
-                //false,
-                //-1,
-                //true
-                 );
-            //copy ("./protected/modules/reportico/assets/css/reportico_bootstrap.css", "./assets/3bdc0adc/css/reportico_bootstrap.css");
-            //copy ("./protected/modules/reportico/assets/js/reportico.js", "./assets/3bdc0adc/js/reportico.js");
+            $this->_assetsUrl = Yii::app()->getAssetManager()->publish( $path );
         }
 
         return $this->_assetsUrl;
