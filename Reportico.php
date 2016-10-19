@@ -37,6 +37,7 @@ class Reportico extends \ls\pluginmanager\PluginBase {
             )
         ))
         ));
+
     }
 
     public function adminPage() 

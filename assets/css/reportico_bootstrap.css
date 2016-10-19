@@ -393,6 +393,14 @@ input.swAdminButton2
     border: solid 1px #AAAAAA;
 }
 
+.swMenuForm .navbar,
+.swMntForm .navbar,
+.swRepForm .navbar,
+.swPrpForm .navbar
+{ 
+    border: none 1px #aaa !important;
+}
+
 .swPrpTopMenu
 {
     width: 100%;
