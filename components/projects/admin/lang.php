@@ -11,14 +11,14 @@ $g_translations = array (
             "HELP_LANGUAGE" => "Choose the default language this report suite should run in. By default English is the only choice. There are a few other language packs available which you will find under the language/packs folder somewhere below the Reportico plugin folder. Move any required ones to the language folder",
             "HELP_DATE_FORMAT" => "Choose the date format that you would like to use for displaying and entering dates",
             "HELP_SAFE_MODE" => "When turned on, design mode will prevent entry of custom user code, assignments, and SQL statements (avoiding unwanted entry of dangerous PHP commands and SQL injection ).
-Turn this off to enable access to these functions. Not available during project creation"
+Turn this off to enable access to these functions.",
             )
         );
 
 
 $g_report_desc = array ( 
     "en_gb" => array (
-		"configureproject" =>
+		"createproject" =>
 "
 Create a new projects folder in which you can create a set of reports.
 <br>
@@ -31,5 +31,13 @@ When you are happy hit the Go button.
 "),
 		);
 
-$g_report_desc["en_gb"]["createproject"] = $g_report_desc["en_gb"]["configureproject"];
+$g_report_desc["en_gb"]["configureproject"] = 
+"
+Change configuration items for this project.
+<br>
+You can alter the title, the defaut language, set a project password, the character encoding and the date format.
+<P>
+When you are happy hit the Go button.
+<P>
+";
 ?>
