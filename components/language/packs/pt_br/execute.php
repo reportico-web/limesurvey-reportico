@@ -17,7 +17,7 @@
  along with this program; if not, write to the Free Software
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
- * File:        languages.php
+ * File:        execute.php
  *
  * This is the core Reportico Reporting Engine. The main 
  * reportico class is responsible for coordinating
@@ -33,17 +33,16 @@
  * @version : reportico.php,v 1.58 2013/04/24 22:03:22 peter Exp $
  */
 $locale_arr = array (
-"language" => "French",
+"language" => "Português Brasileiro",
 "template" => array (
-        "T_en_gb" => "Anglais (UK)",
-        "T_en_us" => "Anglais (US)",
-        "T_fr_fr" => "Français",
-        "T_es_es" => "Espagnol",
-        "T_it_it" => "Italien",
-        "T_ar_ar" => "Arabe",
-        "T_zh_cn" => "Chinois (simplifié)",
-        "T_pt_br" => "Portugais Brésilien",
-
-),
+        // Maintenance Buttons
+		"T_GO_PRINT" => "Imprimir",
+		"T_GO_BACK" => "Voltar",
+		"T_GO_REFRESH" => "Atualizar",
+		"T_NO_DATA_FOUND" => "Nenhum dado foi encontrado com os criterios informados",
+		"T_UNABLE_TO_CONTINUE" => "Não e possível continuar",
+		"T_INFORMATION" => "Informacoes",
+        "T_REQUIRED_CRITERIA" => "Você deve fornecer um valor para o item de critérios",
+        )
 );
 ?>

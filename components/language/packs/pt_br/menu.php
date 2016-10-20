@@ -17,7 +17,7 @@
  along with this program; if not, write to the Free Software
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
- * File:        languages.php
+ * File:        menu.php
  *
  * This is the core Reportico Reporting Engine. The main 
  * reportico class is responsible for coordinating
@@ -33,17 +33,20 @@
  * @version : reportico.php,v 1.58 2013/04/24 22:03:22 peter Exp $
  */
 $locale_arr = array (
-"language" => "French",
-"template" => array (
-        "T_en_gb" => "Anglais (UK)",
-        "T_en_us" => "Anglais (US)",
-        "T_fr_fr" => "FranÃ§ais",
-        "T_es_es" => "Espagnol",
-        "T_it_it" => "Italien",
-        "T_ar_ar" => "Arabe",
-        "T_zh_cn" => "Chinois (simplifiÃ©)",
-        "T_pt_br" => "Portugais BrÃ©silien",
-
-),
-);
+    "language" => "Português Brasileiro",
+    "template" => array (
+        "T_CHOOSE_LANGUAGE" => "Escolha o idioma",
+        "T_GO" => "Ir",
+        "T_LOGGED_IN_AS" => "Logado como",
+        "T_LOGIN" => "Entrar",
+        "T_LOGOFF" => "Sair",
+        "T_ADMIN_HOME" => "Pagina de Administracao",
+        "T_CONFIG_PROJECT" => "Configurar Projeto",
+        "T_CREATE_REPORT" => "Criar Relatorio",
+        "T_ENTER_PROJECT_PASSWORD" => "Informe a senha do projeto.",
+        "T_ENTER_PROJECT_PASSWORD_DEMO" => "Informe a senha do projeto. <br>A senha para estes tutoriais e <b>reportico</b>",
+        "T_UNABLE_TO_CONTINUE" => "Não foi possivel continuar",
+        "T_PASSWORD_ERROR" => "Senha incorreta. Tente novamente.",
+        ),
+        );
 ?>

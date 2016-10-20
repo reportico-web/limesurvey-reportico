@@ -32,18 +32,18 @@
  * @license - http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  * @version : reportico.php,v 1.58 2013/04/24 22:03:22 peter Exp $
  */
-$locale_arr = array (
-"language" => "French",
-"template" => array (
-        "T_en_gb" => "Anglais (UK)",
-        "T_en_us" => "Anglais (US)",
-        "T_fr_fr" => "Français",
-        "T_es_es" => "Espagnol",
-        "T_it_it" => "Italien",
-        "T_ar_ar" => "Arabe",
-        "T_zh_cn" => "Chinois (simplifié)",
-        "T_pt_br" => "Portugais Brésilien",
 
-),
-);
+$locale_arr = array (
+    "template" => array (
+        "T_en_gb" => "Inglês (UK)",
+        "T_en_us" => "Inglês (US)",
+        "T_es_es" => "Espanhol",
+        "T_fr_fr" => "Francês",
+        "T_it_it" => "Italiano",
+        "T_ar_ar" => "Árabe",
+        "T_zh_cn" => "Chinês",
+		"T_pt_br" => "Português Brasileiro",
+        ),
+    );
+
 ?>
