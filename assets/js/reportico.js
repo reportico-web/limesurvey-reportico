@@ -561,6 +561,7 @@ reportico_jquery(document).on('click', '.swAdminButton, .swAdminButton2, .swMenu
                 var buttonName = reportico_jquery(this).prop("name");
                 var formparams = forms.serializeObject();
                 formparams['reportico_ajax_called'] = '1';
+                formparams['YII_CSRF_TOKEN'] = reportico_csrf_token;
                 formparams[buttonName] = '1';
                 //iframe downloader
                 ajaxDownload(ajaxaction, formparams);
@@ -837,6 +838,7 @@ reportico_jquery(document).on('click', '.swPrintBox,.prepareAjaxExecute,#prepare
         var buttonName = reportico_jquery(this).prop("name");
         var formparams = reportico_jquery(critform).serializeObject();
         formparams['execute_mode'] = 'EXECUTE';
+        formparams['YII_CSRF_TOKEN'] = reportico_csrf_token;
         formparams[buttonName] = '1';
         //iframe downloader
         ajaxDownload(ajaxaction, formparams);
