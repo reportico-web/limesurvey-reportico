@@ -60,6 +60,21 @@
     cursor: pointer;
 }
 
+.swDisplayGroupLine td
+{
+    background-color: #eeeeff;
+}
+
+#swPrpSaveFile
+{
+    display: inline !important;
+}
+
+.reportico_bootstrap2_checkbox
+{
+    margin:0px 0px 0px 5px !important;
+}
+
 #swPrpSubmitPane input
 {
     float: right;
@@ -97,7 +112,7 @@
     background: url('../images/search.png') no-repeat;   
     background-color: #ffffff;
     height: 22px; 
-    width: 22px;
+    width: 22px !important;
 }
 
 .swPrpTopMenuCell input {
@@ -310,6 +325,20 @@ div.modal-loading {
     text-decoration: none;
 }
 
+.swToggleCriteria, .swToggleCriteria:link, .swToggleCriteria:visited
+{ 
+    padding-right: 5px;
+    padding-left: 5px;
+    margin-right: 5px;
+    text-align: center;
+    background-color: #337ab7;
+    color: #ffffff;
+    font-size: larger;
+    font-weight: bold;
+    border: none;
+    text-decoration: none;
+}
+
 .swAdminButton2
 { 
     line-height: inherit !important;
@@ -351,6 +380,7 @@ input.swAdminButton2
     padding-bottom: 5px;
 }
 
+/*
 .swLinkMenu 
 { 
     padding-right: 10px;
@@ -360,17 +390,18 @@ input.swAdminButton2
     color: #000000;
     text-decoration: none;
     border: 1px solid #D0CCC9;
-    background-color: #EFEFEF;
+    /*background-color: #EFEFEF;*/
     padding-top: 5px;
     padding-bottom: 5px;
 }
+*/
 
-.swLinkMenu:hover
+/*.swLinkMenu:hover
 {
     border: solid thin #000000;	
     color: #000000 !important;
     background-color: #F2F2f2 !important;
-}
+}*/
 
 /* ------------------------------------------------------------------------------------*/
 /* -----------------------------Styles for Prepare Execute Mode -----------------------*/
@@ -428,8 +459,8 @@ input.swAdminButton2
     text-align: center;
     border-bottom: 1px solid #d0ccc9;
     margin: 0px !important;
-    padding-bottom: 10px;
-    padding-top: 20px;
+    padding-bottom: 2px;
+    padding-top: 10px;
     padding-left: 20px;
 }
 
@@ -903,7 +934,7 @@ input.swAdminButton2
 
 .swMntMidSection
 {
-    width: 280px;
+    width: 200px;
     background-color: #eeeeff;
     border-right: solid black 1px;
 }
@@ -1008,7 +1039,7 @@ input.swAdminButton2
     padding: 5px;
     background-color: inherit;
     color: #555;
-    width: 160px !important;
+    /*width: 160px !important;*/
     text-align: left;
     
 }
@@ -1020,19 +1051,19 @@ input.swAdminButton2
     padding: 5px;
     background-color: inherit;
     color: #555;
-    width: 160px !important;
+    /*width: 160px !important;*/
     text-align: left;
 }
 
 .swMntVertTabMenuCellSel
 { 
-    width: 215px !important;
+    /*width: 115px !important;*/
 }
 
 .swMntVertTabMenuCellUnsel
 { 
     border: 1px solid #bbb;
-    width: 215px !important;
+    /*width: 115px !important;*/
 }
 
 .swMntVertTabMenuCellSel a
@@ -1096,6 +1127,12 @@ input.swAdminButton2
 {
     font-size: 10pt;
     width: auto !important;
+    max-width:480px;
+}
+
+.swMntTextBoxNarrow 
+{
+    max-width:380px !important;
 }
 
 .swMntHelpLink
@@ -1109,6 +1146,7 @@ input.swAdminButton2
 .swMntHelpImage
 { 
     border-style: none;
+    display: inline !important;
 }
 
 .swMntHelp
@@ -1129,7 +1167,7 @@ input.swAdminButton2
 .swStatus
 {
     width:          98%;
-    border: groove thin;
+    border: none;
     border-color : #DDFFDD;
     font-style:	    bold;
     margin-left: 1%;
@@ -1368,5 +1406,10 @@ margin-top: 15px;
 padding: 19px 20px 20px;
 text-align: right;
 border-top: 1px solid #e5e5e5;
+}
+
+#reporticoNoticeModalBody
+{
+    padding: 15px !important;
 }
 

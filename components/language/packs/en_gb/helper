@@ -11,7 +11,7 @@ stage=$1
 
 if [ $stage = "1" ]; then
 rm -f tolang
-php checklang.php > missing
+php checklang.php $2 > missing
 
 if [ ! -f fromlang ]; then
     echo "No fromlang file
@@ -35,6 +35,7 @@ paste fromlang tolang | sed "s/	/|/" > mergedlang
 outfile="unknown"
 cat missing | while read i
 do
+    
     echo $i | grep "^\.\." > /dev/null
     if [ $? -eq 0 ]; then
         outfile=$i.new
@@ -60,6 +61,5 @@ do
         echo "Error in $i "
     fi
 done
-
 
 fi

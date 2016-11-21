@@ -13,7 +13,8 @@ class ReporticoAdminMenuItem extends \ls\menu\MenuItem {
 
     function getHref()
     {
-        return Yii::app()->getController()->createUrl('admin/pluginhelper', array('plugin' => 'Reportico', 'sa'=>'sidebody','method'=>'admin', 'surveyId'=>0));
+        return Yii::app()->getController()->createUrl('admin/pluginhelper', array('plugin' => 'Reportico', 'sa'=>'fullpagewrapper','method'=>'admin', 'surveyId'=>0));
+        //return Yii::app()->getController()->createUrl('admin/', array('plugin' => 'Reportico', 'sa'=>'fullpagewrapper','method'=>'admin', 'surveyId'=>0));
 
     }
 }

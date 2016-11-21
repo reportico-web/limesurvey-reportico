@@ -85,11 +85,17 @@ $locale_arr = array (
         "T_EDITPAGEFOOTERS" => "piè di pagina",
         "T_EDITGROUPHEADERS" => "intestazioni di gruppo",
         "T_EDITGROUPTRAILERS" => "Trailers Gruppo",
+        "T_EDITPRESQLS" => "Pre-SQLs",
         "T_EDITTITLE" => "titolo",
         "T_EDITSQL" => "SQL",
         "T_EDITCRITERIA" => "Criteri",
         "T_EDITCOLUMNS" => "Colonne",
         "T_EDIT" => "Modifica",
+        "T_NOTICE" => "Notifica",
+        "T_SAVE" => "Salvare",
+        "T_REPORT_FILE" => "Segnala un file",
+        "T_NEW_REPORT" => "Un nuovo rapporto",
+        "T_SHOW_CONTENT" => "Mostra contenuto",
         ),
         );
 ?>

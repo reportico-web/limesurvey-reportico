@@ -206,6 +206,7 @@ $locale_arr = array (
         "T_USE" => "Use",
         "T_CRITERIADISPLAY" => "Criteria Display",
         "T_EXPANDDISPLAY" => "Expand Display",
+        "T_CRITERIADISPLAYGROUP" => "Filter Group",
         "T_DATABASETYPE" => "Datasource Type",
         "T_JUSTIFY" => "Justification",
         "T_COLUMN_DISPLAY" => "Show or Hide?",
@@ -390,7 +391,11 @@ $locale_arr = array (
         "T_ASSIGNSTYLEPOSITION" => "Em relação à posição ou página atual",
         "T_ASSIGNFONTNAME" => "Nome da Fonte",
         "T_ASSIGNPDFBACKGROUNDIMAGE" => "Imagem De Fundo",
-
+        "T_SELECT2SINGLE" => "Caixa de Lista Única Pesquisável",
+        "T_SELECT2MULTIPLE" => "Caixa de listagem múltipla pesquisável",
+        "T_CRITERIAHIDDEN" => "Ocultar Critério",
+        "T_CRITERIAREQUIRED" => "Critério necessário",
+    
         )
         );
 ?>

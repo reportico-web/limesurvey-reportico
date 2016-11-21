@@ -33,7 +33,10 @@
  * @version : reportico.php,v 1.58 2013/04/24 22:03:22 peter Exp $
  */
 
-$compare="it_it";
+if ( count($argv) > 1 )
+    $compare=$argv[1];
+else
+    $compare="es_es";
 $tmp=array("prepare", "admin", "maintain", "execute", "menu", "languages");
 
 foreach ( $tmp as $template )

@@ -85,11 +85,17 @@ $locale_arr = array (
         "T_EDITPAGEFOOTERS" => "الصفحة التذييلات",
         "T_EDITGROUPHEADERS" => "رؤوس المجموعة",
         "T_EDITGROUPTRAILERS" => "مقطورة المجموعة",
+        "T_EDITPRESQLS" => "Pre-SQLs",
         "T_EDITTITLE" => "عنوان",
         "T_EDITSQL" => "SQL",
         "T_EDITCRITERIA" => "المعايير",
         "T_EDITCOLUMNS" => "الأعمدة",
         "T_EDIT" => "تحرير",
+        "T_NOTICE" => "إعلام",
+        "T_SAVE" => "حفظ",
+        "T_REPORT_FILE" => "الإبلاغ عن ملف",
+        "T_NEW_REPORT" => "تقرير جديد",
+        "T_SHOW_CONTENT" => "عرض المحتوى",
         ),
         );
 ?>

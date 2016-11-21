@@ -37,7 +37,6 @@ class Reportico extends \ls\pluginmanager\PluginBase {
             )
         ))
         ));
-
     }
 
     /*
@@ -128,7 +127,15 @@ class Reportico extends \ls\pluginmanager\PluginBase {
         {
             //Yii::app()->getAssetManager()->forceCopy = true;
             $path = __DIR__."/assets";
-            $this->_assetsUrl = Yii::app()->getAssetManager()->publish( $path );
+            $this->_assetsUrl = Yii::app()->getAssetManager()->publish(
+                //Yii::getPathOfAlias('plugins.Reportico.assets')
+                $path 
+                //false,
+                //-1,
+                //true
+                 );
+            //copy ("./protected/modules/reportico/assets/css/reportico_bootstrap.css", "./assets/3bdc0adc/css/reportico_bootstrap.css");
+            //copy ("./protected/modules/reportico/assets/js/reportico.js", "./assets/3bdc0adc/js/reportico.js");
         }
 
         return $this->_assetsUrl;
@@ -288,6 +295,10 @@ class Reportico extends \ls\pluginmanager\PluginBase {
         $this->engine->available_connections = $this->configGet("database.connections");
 */
         $this->engine->external_connection = Yii::app()->db->getPDOInstance();
+
+        // Set Table Prefix
+        $this->engine->user_parameters["prefix"] = Yii::app()->db->tablePrefix;
+        $this->engine->user_parameters["lime_"] = Yii::app()->db->tablePrefix;
 
         // Set Yii Database Access Config from configuration
         if ( !defined("SW_FRAMEWORK_DB_DRIVER") )
@@ -458,8 +469,11 @@ class Reportico extends \ls\pluginmanager\PluginBase {
         //                    ),
         //            );
 
+        // Set Table Prefix
+        $this->engine->user_parameters["prefix"] = Yii::app()->db->tablePrefix;
+        $this->engine->user_parameters["lime_"] = Yii::app()->db->tablePrefix;
 
-        // Set Joomla Database Access Config from configuration
+        // Set Limesurvey Database Access Config from configuration
         if ( !defined("SW_FRAMEWORK_DB_DRIVER") )
         {
             // Extract Yii database elements from connection string 

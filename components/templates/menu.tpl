@@ -38,6 +38,7 @@
 <script type="text/javascript" src="{/literal}{$JSPATH}{literal}/ui/jquery-ui.js"></script>
 {/literal}
 {literal}
+<script type="text/javascript" src="{/literal}{$JSPATH}{literal}/download.js"></script>
 <script type="text/javascript" src="{/literal}{$JSPATH}{literal}/reportico.js"></script>
 {/literal}
 {/if}
@@ -75,9 +76,11 @@
 <script type="text/javascript">var reportico_ajax_script = "{/literal}{$REPORTICO_AJAX_RUNNER}{literal}";</script>
 {/literal}
 {if $REPORTICO_BOOTSTRAP_MODAL}
+<script type="text/javascript">var reportico_bootstrap_styles = "{$BOOTSTRAP_STYLES}";</script>
 <script type="text/javascript">var reportico_bootstrap_modal = true;</script>
 {else}
 <script type="text/javascript">var reportico_bootstrap_modal = false;</script>
+<script type="text/javascript">var reportico_bootstrap_styles = false;</script>
 {/if}
 {literal}
 <script type="text/javascript">var reportico_ajax_mode = "{/literal}{$REPORTICO_AJAX_MODE}{literal}";</script>
@@ -136,7 +139,7 @@
 {if true || $SHOW_REPORT_MENU}
 
 {if $BOOTSTRAP_STYLES}
-{if $BOOTSTRAP_STYLES == "2" || $BOOTSTRAP_STYLES == "3" }
+{if $BOOTSTRAP_STYLES == "2" || $BOOTSTRAP_STYLES == "3" || $BOOTSTRAP_STYLES == "joomla3" }
 <!-- BOOTSTRAP VERSION -->
 {if $SHOW_HIDE_NAVIGATION_MENU == "show" || $SHOW_HIDE_DROPDOWN_MENU == "show"}
     <div class="navbar navbar-default" role="navigation">
@@ -147,10 +150,11 @@
 {if $BOOTSTRAP_STYLES == "2" }
         <div class="navbar-inner">
 {/if}
-        <div class="container" style="width: 100%">
 {if $BOOTSTRAP_STYLES == "2" }
+        <div class="container" style="width: 100%">
             <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target="#reportico-bootstrap-collapse"-->
 {else}
+        <div class="container" style="width: 100%">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#reportico-bootstrap-collapse">
 {/if}
                 <span class="icon-bar"></span>
@@ -326,6 +330,9 @@
 {strip}
 		<TR> 
 			<TD class="swMenuItem">
+{if $MENU_ITEMS[menuitem].label == "TEXT"}
+				{$MENU_ITEMS[menuitem].url}
+{else}
 {if $MENU_ITEMS[menuitem].label == "BLANKLINE"}
 				&nbsp;
 {else}
@@ -333,6 +340,7 @@
 				<hr>
 {else}
 				<a class="swMenuItemLink" href="{$MENU_ITEMS[menuitem].url}">{$MENU_ITEMS[menuitem].label}</a>
+{/if}
 {/if}
 {/if}
 			</TD>

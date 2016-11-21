@@ -96,12 +96,18 @@ $locale_arr = array (
         "T_EDITPAGEFOOTERS" => "Rodapé",
         "T_EDITGROUPHEADERS" => "Cabeçalhos de grupo",
         "T_EDITGROUPTRAILERS" => "Trailers Grupo",
+        "T_EDITPRESQLS" => "Pre-SQLs",
         "T_OPEN_LOGIN" => "Entrar no modo de design",
         "T_OPEN_LOGOFF" => "Modo Design Retire",
         "T_SELECT2SINGLE" => "Pesquisável Lista Única Box",
         "T_SELECT2MULTIPLE" => "Pesquisável Box Lista Múltipla",
         "T_CRITERIAHIDDEN" => "Esconder Critários",
         "T_CRITERIAREQUIRED" => "Critários exigidos",
+        "T_NOTICE" => "Notificação",
+        "T_SAVE" => "Salvar",
+        "T_REPORT_FILE" => "Arquivo do relatorio",
+        "T_NEW_REPORT" => "Novo relatorio",
+        "T_SHOW_CONTENT" => "Mostra contenuto",
         ),
         );
 ?>

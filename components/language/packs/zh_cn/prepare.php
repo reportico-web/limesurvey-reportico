@@ -88,11 +88,17 @@ $locale_arr = array (
         "T_EDITPAGEFOOTERS" => "页面页脚",
         "T_EDITGROUPHEADERS" => "组头",
         "T_EDITGROUPTRAILERS" => "集团拖车",
+        "T_EDITPRESQLS" => "Pre-SQLs",
         "T_EDITTITLE" => "称号",
         "T_EDITSQL" => "SQL",
         "T_EDITCRITERIA" => "标准",
         "T_EDITCOLUMNS" => "列",
         "T_EDIT" => "编辑",
+        "T_NOTICE" => "通知",
+		"T_SAVE" => "保存",
+		"T_REPORT_FILE" => "报告文件",
+		"T_NEW_REPORT" => "新的报告",
+        "T_SHOW_CONTENT" => "展示内容",
 
 ),
 );

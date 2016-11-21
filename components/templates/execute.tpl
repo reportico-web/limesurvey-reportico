@@ -50,6 +50,7 @@
 <script type="text/javascript" src="{/literal}{$JSPATH}{literal}/ui/jquery-ui.js"></script>
 {/literal}
 {literal}
+<script type="text/javascript" src="{/literal}{$JSPATH}{literal}/download.js"></script>
 <script type="text/javascript" src="{/literal}{$JSPATH}{literal}/reportico.js"></script>
 {/literal}
 {/if}
@@ -82,11 +83,14 @@
 <script type="text/javascript">var reportico_datepicker_language = "{/literal}{$AJAX_DATEPICKER_FORMAT}{literal}";</script>
 <script type="text/javascript">var reportico_this_script = "{/literal}{$SCRIPT_SELF}{literal}";</script>
 <script type="text/javascript">var reportico_ajax_script = "{/literal}{$REPORTICO_AJAX_RUNNER}{literal}";</script>
+<script type="text/javascript">var pdf_delivery_mode = "{/literal}{$PDF_DELIVERY_MODE}{literal}";</script>
 {/literal}
 {if $REPORTICO_BOOTSTRAP_MODAL}
+<script type="text/javascript">var reportico_bootstrap_styles = "{$BOOTSTRAP_STYLES}";</script>
 <script type="text/javascript">var reportico_bootstrap_modal = true;</script>
 {else}
 <script type="text/javascript">var reportico_bootstrap_modal = false;</script>
+<script type="text/javascript">var reportico_bootstrap_styles = false;</script>
 {/if}
 {literal}
 <script type="text/javascript">var reportico_ajax_mode = "{/literal}{$REPORTICO_AJAX_MODE}{literal}";</script>
@@ -125,26 +129,26 @@
 */
 function resizeOutputTables(window)
 {
-  var tableArr = reportico_jquery(".swRepPage");
-  var tableDataRow = reportico_jquery('.swRepResultLine:first');
+  var tableArr = $(".swRepPage");
+  var tableDataRow = $('.swRepResultLine:first');
 
   var cellWidths = new Array();
-  reportico_jquery(tableDataRow).each(function() {
-    for(j = 0; j < reportico_jquery(this)[0].cells.length; j++){
-       var cell = reportico_jquery(this)[0].cells[j];
+  $(tableDataRow).each(function() {
+    for(j = 0; j < $(this)[0].cells.length; j++){
+       var cell = $(this)[0].cells[j];
        if(!cellWidths[j] || cellWidths[j] < cell.clientWidth) cellWidths[j] = cell.clientWidth;
     }
   });
 
   var tablect = 0;
-  reportico_jquery(tableArr).each(function() {
+  $(tableArr).each(function() {
     tablect++;
     if ( tablect == 1 )
         return;
 
-    reportico_jquery(this).find(".swRepResultLine:first").each(function() {
-      for(j = 0; j < reportico_jquery(this)[0].cells.length; j++){
-        reportico_jquery(this)[0].cells[j].style.width = cellWidths[j]+'px';
+    $(this).find(".swRepResultLine:first").each(function() {
+      for(j = 0; j < $(this)[0].cells.length; j++){
+        $(this)[0].cells[j].style.width = cellWidths[j]+'px';
       }
    });
  });
@@ -163,6 +167,17 @@ function resizeOutputTables(window)
     </script>
 <div class="swRepForm">
 {if strlen($ERRORMSG)>0}
+            <div id="reporticoEmbeddedError">
+                {$ERRORMSG}
+            </div>
+{literal}
+            <script>
+                $(document).ready(function()
+                {
+                    showParentNoticeModal($("#reporticoEmbeddedError").html());
+                });
+            </script>
+{/literal}
             <TABLE class="swError">
                 <TR>
                     <TD>{$ERRORMSG}</TD>
@@ -216,3 +231,45 @@ function resizeOutputTables(window)
 {/if}
 {/if}
 
+{if $REPORTICO_BOOTSTRAP_MODAL}
+{if $BOOTSTRAP_STYLES == "3" }
+<div class="modal fade" id="reporticoNoticeModal" tabindex="-1" role="dialog" aria-labelledby="reporticoNoticeModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+{else}
+<div class="modal fade" style="width: 500px; margin-left: -450px" id="reporticoNoticeModal" tabindex="-1" role="dialog" aria-labelledby="reporticoModal" aria-hidden="true">
+    <div class="modal-dialog">
+{/if}
+        <div class="modal-content">
+            <div class="modal-header">
+            <button type="button" data-dismiss="modal" class="close" aria-hidden="true">&times;</button>
+            <h4 class="modal-title reportico-modal-title" id="reporticoNoticeModalLabel">{$T_NOTICE}</h4>
+            </div>
+            <div class="modal-body" style="padding: 0px" id="reporticoNoticeModalBody">
+                <h3>Modal Body</h3>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                <!--button type="button" class="btn btn-primary" >Close</button-->
+        </div>
+    </div>
+  </div>
+</div>
+{else}
+<div id="reporticoModal" tabindex="-1" class="reportico-modal">
+    <div class="reportico-modal-dialog">
+        <div class="reportico-modal-content">
+            <div class="reportico-modal-header">
+            <button type="button" class="reportico-modal-close">&times;</button>
+            <h4 class="reportico-modal-title" id="reporticoModalLabel">Set Parameter</h4>
+            </div>
+            <div class="reportico-modal-body" style="padding: 0px" id="swMiniMaintain">
+                <h3>Modal Body</h3>
+            </div>
+            <div class="reportico-modal-footer">
+                <!--button type="button" class="btn btn-default" data-dismiss="modal">Close</button-->
+                <button type="button" class="swMiniMaintainSubmit" >Close</button>
+        </div>
+    </div>
+  </div>
+</div>
+{/if}
