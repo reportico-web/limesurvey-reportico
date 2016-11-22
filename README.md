@@ -26,9 +26,6 @@ http://www.reportico.org/documentation/4.6/doku.php?id=reporticotutorial
 
 
 
-Then you can follow the instructions to a point here:-
-
-http://reportico.org/yii2/web/index.php/quickstart/gettingstarted
 
 
 
