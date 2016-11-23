@@ -31,4 +31,6 @@ The "tutorials" project allows you set up  sample dataset in your database which
 
 http://www.reportico.org/documentation/4.6/doku.php?id=reporticotutorial
 
+## Screenshots
 
+![Administration Page](/components/images/lsadmin.png?raw=true "Administration Page")
