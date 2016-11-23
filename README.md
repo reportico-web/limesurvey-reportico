@@ -2,6 +2,8 @@
 
 Reportico Plugin for Limesurvey.
 
+Compatibility: Limesurvey 2.5.4 +
+
 Provides 
 
 
@@ -34,3 +36,7 @@ http://www.reportico.org/documentation/4.6/doku.php?id=reporticotutorial
 ## Screenshots
 
 ![Administration Page](/components/images/lsadmin.png?raw=true "Administration Page")
+![Menu Page](/components/images/lsmenu.png?raw=true "Menu Page")
+![Criteria Page](/components/images/lscriteria.png?raw=true "Criteria Page")
+![Edit Query Page](/components/images/lssql.png?raw=true "Edit Query Page")
+![Report Output Page](/components/images/lsoutput.png?raw=true "Report Output Page")
