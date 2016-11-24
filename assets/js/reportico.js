@@ -169,7 +169,6 @@ function setupNoticeModals()
     $('#reporticoNoticeModal').modal(options);
 }
 
-
 function setupDropMenu()
 {
     if ( $('ul.jd_menu').length != 0  )
@@ -1196,4 +1195,3 @@ function html_print_fix()
         reporticohtmlwindow.resizeOutputTables(reporticohtmlwindow); 
     }
 }
-
