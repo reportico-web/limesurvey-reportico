@@ -20,12 +20,12 @@ Until Limesurvey specific documentation is written here is some basic instructio
 To get going there are two useful report projects already setup and you will find them under the plugins/Reportico/components/projects under your Limesurvey installation. They are in folders named "tutorials" and "examples". You need to copy these to the tmp/runtime/reportico/projects under your Limesurvey installation.
 After doing this, they will appear as available projects in your Reportico admin page within Limesurvey.
 
-The "examples" project provides a few example reports on your survey database. Note that this project under tmp/runtime/reportico/projects  contains a file called reportico_defults.php, which sets styling defaults nad provided useful functions. Note also the xml files which are the file definitions. Notice that the answers.xml is accompanied by an answers.xml.php. This is a custom file which runs custom functions prior to report generation. This particular file calls a function called denormalize_survey_responses(). This function in reportico_defauts.php generates a table from the lime_survey_XXXX tables with one row per answer instead of one column. This table is called "t_answer" and when this function is called, this temp table can be used in the reports. The tables joins survey, group, question and actual responses together in the structure and can be selected with
+The "examples" project provides a few example reports on your survey database. Note that this project under tmp/runtime/reportico/projects  contains a file called reportico_defults.php, which sets styling defaults and provides useful functions. Note also the xml files which are the file definitions. Notice that the answers.xml is accompanied by an answers.xml.php. This is a custom file which runs custom functions prior to report generation. This particular file calls a function called denormalize_survey_responses(). This function in reportico_defauts.php generates a table from the lime_survey_XXXX tables with one row per answer instead of one column. This table is called "t_answer" and when this function is called, this temp table can be used in the reports. The tables join survey, group, question and actual responses together in the structure and can be selected with
 
 SELECT sid, gid, qid, title, question, type, ch_title, code, count
 FROM t_answers
 
-count is set to 1 if the response code is se, which will Y/N foryes/no responses or a code for multi choice options.This mean you can sum the count column to get counts of particular answers given.
+count is set to 1 if the response code is se, which will give Y/N for yes/no responses or a code for multi choice options. This means you can sum the count column to get counts of particular answers given.
 
 This format is useful for generating certain types of reports which count answers grouped by question/group.
 
