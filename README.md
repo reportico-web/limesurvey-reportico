@@ -2,7 +2,7 @@
 
 Reportico Plugin for Limesurvey.
 
-Compatibility: Limesurvey 2.5.4 +
+Compatibility: Limesurvey 2.5.4 - 2.7.x
 
 Provides 
 
