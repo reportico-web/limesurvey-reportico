@@ -8913,8 +8913,6 @@ class reportico_query_column extends reportico_object
 
 }
 
-
-
 // Setup SESSION
 //set_up_reportico_session();
 

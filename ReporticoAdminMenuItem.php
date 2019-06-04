@@ -1,5 +1,5 @@
 <?php
-class ReporticoAdminMenuItem extends \ls\menu\MenuItem {
+class ReporticoAdminMenuItem extends LimeSurvey\Menu\MenuItem {
 
     public function __construct($options) {
         parent::__construct($options);

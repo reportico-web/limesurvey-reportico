@@ -1,5 +1,5 @@
 <?php 
-class Reportico extends \ls\pluginmanager\PluginBase {
+class Reportico extends LimeSurvey\PluginManager\PluginBase {
 
 
     protected $storage = 'DbStorage';
@@ -9,7 +9,7 @@ class Reportico extends \ls\pluginmanager\PluginBase {
     public $engine;
     private $_assetsUrl;
     
-    public function __construct(PluginManager $manager, $id) {
+    public function __construct(LimeSurvey\PluginManager\PluginManager $manager, $id) {
         parent::__construct($manager, $id);
 
         /**
