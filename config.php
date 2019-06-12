@@ -10,7 +10,6 @@
             'path_to_assets' => 'packages/reportico/reportico',
 
             // Path relative to laravel pase or fully where projects will be created
-            //'path_to_projects' => __DIR__."/components/projects",
             'path_to_projects' => Yii::app()->getRuntimePath()."/reportico/projects",
 
             // Path relative to laravel pase or fully where admin project will be stored

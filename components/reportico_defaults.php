@@ -155,4 +155,85 @@
                 $reportico->create_page_footer("F1", 2, "Page: {PAGE}{STYLE border-width: 1 0 0 0; margin: 40 0 0 0; font-style: italic; }" );
             }
     }   
+
+    /*
+    * Creates a denormalized representation of lime_survey_xxxxx table
+    * for easy joining row by row questions, answers and actual responses
+    * Creates a temporary table
+    *
+    * Parameters
+    * engine - reference to the reportico process in order yo 
+    */
+    
+function denormalize_survey_responses($engine)
+{
+$survey = $engine->get_criteria_value("survey");
+$group = $engine->get_criteria_value("group");
+
+    $swhere = "";
+    $gwhere = "";
+    if ( $survey ) $swhere = " AND s.sid in ( $survey )";
+    if ( $group ) $gwhere = " AND g.gid in ( $group )";
+    $sql = "select s.sid, g.gid, q.qid,
+        g.group_name,
+        q.title,
+        q.question,
+        q.type,
+        cq.title ch_title,
+        CASE
+            WHEN cq.title IS NOT NULL THEN concat(s.sid, 'X', g.gid, 'X', q.qid, cq.title )
+            ELSE concat(s.sid, 'X', g.gid, 'X', q.qid )
+        END id
+            from lime_surveys s
+            join lime_groups g ON g.sid = s.sid $swhere $gwhere
+            join lime_questions q ON q.gid = g.gid AND q.parent_qid  = 0
+            left join lime_questions cq ON cq.parent_qid = q.qid
+        where 1 = 1
+    ";
+
+    $stmt = Yii::app()->db->createCommand($sql)->queryAll();
+    //echo "<PRE>";
+    $unions = [];
+    foreach ( $stmt as $row )
+    {
+        $unions[]  = sprintf("SELECT '%s' group_name, \n
+                              '%s' title, \n
+                              '%s' question, \n
+                              '%s' type, \n
+                              '%s' id, \n
+                              '%s' qid, \n
+                              '%s' gid, \n
+                              '%s' ch_title, \n
+                              s.%s code, \n
+                                0 count
+                        FROM lime_survey_%s AS s \n
+                        LEFT JOIN lime_answers AS a \n
+                          ON a.code = s.%s
+                          AND a.qid = '%s' \n",
+        $row["group_name"],
+        $row["title"],
+        preg_replace("/'/", "/\'/", $row["question"]),
+        $row["type"],
+        $row["id"],
+        $row["qid"],
+        $row["gid"],
+        $row["ch_title"],
+        $row["id"],
+        $row["sid"],
+        $row["id"],
+        $row["qid"]);
+    }
+
+    $union = implode( "\nUNION ALL\n", $unions);
+
+    $union = "CREATE TEMPORARY TABLE t_answers AS $union";
+    $stmt = Yii::app()->db->createCommand($union)->execute();
+
+    //echo "<PRE>";
+    //echo $the_union;
+    //echo "</PRE>";
+
+    $sql = "UPDATE t_answers SET count = 1 WHERE code IS NOT NULL";
+    return Yii::app()->db->createCommand($sql)->execute();
+}
 ?>
